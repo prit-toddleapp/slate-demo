@@ -1,6 +1,16 @@
 import React, { useState, useCallback } from "react";
 import { createEditor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
+import {
+  AiBlock,
+  BlockSubtext,
+  BlockTitle,
+  ResourceBlock,
+  Section,
+  SectionBody,
+  SectionHeader,
+  DefaultElement,
+} from "./Elements";
 
 const initialValue = [
   {
@@ -145,92 +155,5 @@ const Leaf = (props) => {
 };
 
 //components
-
-const Section = (props) => {
-  const { attributes, children, element } = props;
-  console.log(children);
-  return (
-    <div
-      {...attributes}
-      style={{ display: "flex", columnGap: "10px", marginBottom: "16px" }}
-    >
-      <div>
-        {element.isCollapsed ? element.collapsedIcon : element.expandedIcon}
-      </div>
-      <div>{element.isCollapsed ? [children[0]] : children}</div>
-    </div>
-  );
-};
-
-const SectionHeader = (props) => {
-  return (
-    <div
-      {...props.attributes}
-      style={{ fontWeight: "500", marginBottom: "12px" }}
-    >
-      <div>{props.children}</div>
-    </div>
-  );
-};
-
-const SectionBody = (props) => {
-  if (props.element.isCollapsed) return null;
-
-  return (
-    <div {...props.attributes}>
-      <div>{props.children}</div>
-    </div>
-  );
-};
-
-const AiBlock = (props) => {
-  return (
-    <div {...props.attributes} style={{ marginBottom: "12px" }}>
-      {props.children}
-    </div>
-  );
-};
-
-const BlockTitle = (props) => {
-  return (
-    <div {...props.attributes} style={{ fontWeight: "500", fontSize: "16px" }}>
-      {props.children}
-    </div>
-  );
-};
-
-const BlockSubtext = (props) => {
-  return (
-    <div
-      {...props.attributes}
-      style={{ fontWeight: "normal", fontSize: "14px", color: "#717171" }}
-    >
-      {props.children}
-    </div>
-  );
-};
-
-const ResourceBlock = (props) => {
-  const { element } = props;
-  return (
-    <div
-      {...props.attributes}
-      style={{
-        display: "flex",
-        marginBottom: "12px",
-        columnGap: "10px",
-        fontWeight: "500",
-        fontSize: "16px",
-      }}
-    >
-      <div style={{ color: "blue" }}>{element.iconUrl}</div>
-      <div>{props.children}</div>
-    </div>
-  );
-};
-
-const DefaultElement = (props) => {
-  return <div {...props.attributes}>{props.children}</div>;
-};
 
 export default UnitFlow;
