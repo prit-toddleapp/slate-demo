@@ -1,4 +1,4 @@
-import { Node } from "slate";
+import { Node, Editor, Transforms } from "slate";
 
 export const findElementPath = (editor, path = [], element) => {
   console.log(editor);
@@ -19,4 +19,14 @@ export const findElementPath = (editor, path = [], element) => {
     }
 
   return null;
+};
+
+export const updateNodeChildren = (editor, path, newChildren) => {
+  const range = Editor.range(editor, path);
+  Transforms.delete(editor, { at: range });
+
+  for (let i = 0; i < newChildren.length; i++) {
+    const child = newChildren[i];
+    Transforms.insertNodes(editor, child, { at: [...path, i] });
+  }
 };

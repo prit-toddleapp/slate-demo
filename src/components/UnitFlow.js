@@ -108,7 +108,7 @@ function UnitFlow() {
       case "sectionBody":
         return <SectionBody {...props} />;
       case "aiBlock":
-        return <AiBlock {...props} />;
+        return <AiBlock {...props} editor={editor} />;
       case "blockTitle":
         return <BlockTitle {...props} />;
       case "blockSubtext":

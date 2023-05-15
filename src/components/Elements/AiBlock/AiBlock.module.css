@@ -1,0 +1,12 @@
+.AiBlockContainer{
+    display: flex;
+    margin-left: -20px;
+    column-gap: 10px;
+}
+
+.buttonContainer{
+    visibility: hidden;
+}
+.AiBlockContainer:hover .buttonContainer{
+    visibility: visible;
+}
