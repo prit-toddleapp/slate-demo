@@ -167,3 +167,8 @@ export const menuOptions = {
   ],
   newBlock: [{ key: "DELETE", label: "Delete", id: "DELETE" }],
 };
+
+export const getMenuOptions = (type) => {
+  if (menuOptions[type]) return menuOptions[type];
+  else return menuOptions.newBlock;
+};

@@ -8,7 +8,7 @@ import { Transforms } from "slate";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
-import { menuOptions } from "../../../Utils/DefaultBlocksUtil";
+import { getMenuOptions, menuOptions } from "../../../Utils/DefaultBlocksUtil";
 
 const BlockWrapper = ({ editor, element, child, attributes }) => {
   const [visibility, setVisibility] = useState("hidden");
@@ -126,7 +126,7 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
             },
           }}
         >
-          {menuOptions[element.type].map((option) => (
+          {getMenuOptions(element.type).map((option) => (
             <MenuItem
               key={option.key}
               selected={option === "Pyxis"}
