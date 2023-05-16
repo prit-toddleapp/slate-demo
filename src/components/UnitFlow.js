@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from "react";
-import classes from "./UnitFlow.module.css";
 import { createEditor, Transforms } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import {
@@ -12,9 +11,8 @@ import {
   SectionHeader,
   DefaultElement,
 } from "./Elements";
-import { findElementPath, updateNodeChildren } from "../Plugins";
-import AddIcon from "@mui/icons-material/Add";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { findElementPath } from "../Plugins";
+import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
 
 const initialValue = [
   {
@@ -98,49 +96,6 @@ const initialValue = [
     ],
   },
 ];
-
-const BlockWrapper = ({ editor, element, child, attributes }) => {
-  const addNewBlock = () => {
-    const newBlock = {
-      type: "paragraph",
-      children: [
-        {
-          text: "",
-        },
-      ],
-    };
-    const path = findElementPath(editor, element);
-    path[path.length - 1] = path[path.length - 1] + 1;
-    console.log(path);
-    Transforms.insertNodes(editor, newBlock, { at: path });
-  };
-
-  const handleClick = () => {
-    const path = findElementPath(editor, element);
-    updateNodeChildren(editor, path, element.children[0].children);
-    Transforms.setNodes(
-      editor,
-      {
-        type: "resourceBlock",
-        iconUrl: "LE",
-      },
-      { at: path }
-    );
-  };
-
-  return (
-    <div className={classes.blockWrapperContainer} {...attributes}>
-      <div onClick={addNewBlock} className={classes.buttonContainer}>
-        <AddIcon fontSize="small" />
-      </div>
-      <div className={classes.buttonContainer} onClick={handleClick}>
-        <DragIndicatorIcon fontSize="small" />
-      </div>
-
-      <div>{child}</div>
-    </div>
-  );
-};
 
 function UnitFlow() {
   const [editor] = useState(() => withReact(createEditor()));

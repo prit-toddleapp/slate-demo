@@ -1,0 +1,14 @@
+.blockWrapperContainer{
+    display: flex;
+    column-gap: 10px;
+}
+
+.buttonContainer{
+    height: 20px;
+    width: 15px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    cursor: pointer;
+    color: #cdcdcd
+}
