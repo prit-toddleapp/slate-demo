@@ -6,6 +6,7 @@ import Section from "./Section/Section";
 import SectionBody from "./SectionBody/SectionBody";
 import SectionHeader from "./SectionHeader/SectionHeader";
 import DefaultElement from "./DefaultElement/DefaultElement";
+import TextBox from "./TextBox/TextBox";
 
 export {
   AiBlock,
@@ -16,4 +17,5 @@ export {
   SectionBody,
   SectionHeader,
   DefaultElement,
+  TextBox,
 };

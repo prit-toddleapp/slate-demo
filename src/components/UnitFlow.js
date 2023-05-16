@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import classes from "./UnitFlow.module.css";
-import { createEditor, Transforms } from "slate";
+import { createEditor, Transforms, Editor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import {
   AiBlock,
@@ -11,10 +11,13 @@ import {
   SectionBody,
   SectionHeader,
   DefaultElement,
+  TextBox,
 } from "./Elements";
 import { findElementPath, updateNodeChildren } from "../Plugins";
 import AddIcon from "@mui/icons-material/Add";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+
+import { getSectionFromInputText } from "../Utils/Misc";
 
 const initialValue = [
   {
@@ -35,6 +38,10 @@ const initialValue = [
         type: "sectionBody",
         //isCollapsed: false, is this appraoch better?
         children: [
+          {
+            type: "textBox",
+            children: [{ text: "This is the text box" }],
+          },
           {
             type: "aiBlock",
             children: [
@@ -102,7 +109,7 @@ const initialValue = [
 const BlockWrapper = ({ editor, element, child, attributes }) => {
   const addNewBlock = () => {
     const newBlock = {
-      type: "paragraph",
+      type: "textBox",
       children: [
         {
           text: "",
@@ -111,7 +118,7 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
     };
     const path = findElementPath(editor, element);
     path[path.length - 1] = path[path.length - 1] + 1;
-    console.log(path);
+
     Transforms.insertNodes(editor, newBlock, { at: path });
   };
 
@@ -143,7 +150,7 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
 };
 
 function UnitFlow() {
-  const [editor] = useState(() => withReact(createEditor()));
+  const [editor] = useState(() => withEditableVoids(withReact(createEditor())));
   const [value, setValue] = useState(initialValue);
 
   const renderElement = useCallback((props) => {
@@ -182,6 +189,8 @@ function UnitFlow() {
             {...props}
           />
         );
+      case "textBox":
+        return <TextBox {...props} addNewSection={addNewSection} />;
       default:
         return (
           <BlockWrapper
@@ -198,6 +207,23 @@ function UnitFlow() {
   }, []);
 
   const keyDownOps = (event) => {};
+
+  const addNewSection = (inputText, element) => {
+    let newSection = getSectionFromInputText(inputText);
+    let elementPath = findElementPath(editor, element);
+    const lastElement = elementPath[elementPath.length - 1];
+    let newSectionPath = [...elementPath];
+    newSectionPath[newSectionPath.length - 1] =
+      lastElement > 1 ? lastElement - 1 : 0;
+
+    console.log(elementPath);
+    console.log(newSectionPath);
+    if (newSection) {
+      // const range = Editor.range(editor, elementPath);
+      Transforms.delete(editor, { at: elementPath });
+      Transforms.insertNodes(editor, newSection, { at: elementPath });
+    }
+  };
 
   const collapsedIconClicked = (event, element) => {
     event.preventDefault();
@@ -234,6 +260,17 @@ function UnitFlow() {
     </div>
   );
 }
+
+const withEditableVoids = (editor) => {
+  const { isVoid } = editor;
+
+  const VOID_TYPES = ["textBox"];
+  editor.isVoid = (element) => {
+    return VOID_TYPES.includes(element.type) ? true : isVoid(element);
+  };
+
+  return editor;
+};
 
 const Leaf = (props) => {
   let { attributes, children, leaf } = props;
