@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { findElementPath, turnInElement } from "../../../Plugins";
+import { addNewBlock, findElementPath, turnInElement } from "../../../Plugins";
 import _ from "lodash";
 import classes from "./BlockWrapper.module.css";
 import AddIcon from "@mui/icons-material/Add";
@@ -8,26 +8,12 @@ import { Transforms } from "slate";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
-import { getMenuOptions, menuOptions } from "../../../Utils/DefaultBlocksUtil";
+import { getMenuOptions } from "../../../Utils/DefaultBlocksUtil";
 
 const BlockWrapper = ({ editor, element, child, attributes }) => {
   const [visibility, setVisibility] = useState("hidden");
   const [anchorEl, setAnchorEl] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-
-  const addNewBlock = () => {
-    const newBlock = {
-      type: "newBlock",
-      children: [
-        {
-          text: "",
-        },
-      ],
-    };
-    const path = findElementPath(editor, element);
-    path[path.length - 1] = path[path.length - 1] + 1;
-    Transforms.insertNodes(editor, newBlock, { at: path });
-  };
 
   const onMouseOver = (e) => {
     e.stopPropagation();
@@ -55,7 +41,7 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
     console.log(e.target.textContent);
     switch (e.target.textContent) {
       case "Ask Shifu":
-        addNewBlock();
+        addNewBlock(editor, element);
         break;
       case "Duplicate":
         {
@@ -93,7 +79,7 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
       onMouseOut={onMouseOut}
     >
       <div
-        onClick={addNewBlock}
+        onClick={() => addNewBlock(editor, element)}
         className={classes.buttonContainer}
         style={{ visibility }}
       >

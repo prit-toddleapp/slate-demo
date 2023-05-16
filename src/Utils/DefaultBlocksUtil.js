@@ -148,6 +148,11 @@ export const initialValue = [
   },
 ];
 
+export const newBlockMenuOptions = [
+  { key: "SHIFU", label: "Ask Shifu" },
+  { key: "SECTION", label: "Add new section" },
+];
+
 export const menuOptions = {
   section: [
     { key: "SHIFU", label: "Ask Shifu", id: "SHIFU" },
@@ -155,6 +160,7 @@ export const menuOptions = {
     { key: "DELETE", label: "Delete", id: "DELETE" },
   ],
   aiBlock: [
+    { key: "SHIFU", label: "Ask Shifu", id: "SHIFU" },
     { key: "DUPLICATE", label: "Duplicate", id: "DUPLICATE" },
     { key: "TURNINLE", label: "Turn In to LE", id: "TURNIN" },
     { key: "TURNINFA", label: "Turn In to FA", id: "TURNIN" },

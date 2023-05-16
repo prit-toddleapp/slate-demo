@@ -31,3 +31,17 @@ export const turnInElement = (editor, element, iconType) => {
     { at: path }
   );
 };
+
+export const addNewBlock = (editor, element) => {
+  const newBlock = {
+    type: "newBlock",
+    children: [
+      {
+        text: "",
+      },
+    ],
+  };
+  const path = findElementPath(editor, element);
+  path[path.length - 1] = path[path.length - 1] + 1;
+  Transforms.insertNodes(editor, newBlock, { at: path });
+};

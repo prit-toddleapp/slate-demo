@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import classes from "./UnitFlow.module.css";
 import { createEditor, Transforms } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import {
@@ -15,7 +16,7 @@ import { findElementPath } from "../Plugins";
 import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
 import { initialValue } from "../Utils/DefaultBlocksUtil";
 
-function UnitFlow() {
+const UnitFlow = () => {
   const [editor] = useState(() => withReact(createEditor()));
   const [value, setValue] = useState(initialValue);
 
@@ -58,7 +59,7 @@ function UnitFlow() {
       default:
         return (
           <BlockWrapper
-            child={<DefaultElement {...props} />}
+            child={<DefaultElement {...props} editor={editor} />}
             editor={editor}
             {...props}
           />
@@ -86,8 +87,9 @@ function UnitFlow() {
   };
 
   return (
-    <div>
-      <div style={{ padding: "20px", border: "1px solid black" }}>
+    <div className={classes.untFlowBlock}>
+      <h1>Unit Flow</h1>
+      <div className={classes.slateContainer}>
         <Slate editor={editor} value={value} onChange={(v) => setValue(v)}>
           <Editable
             renderElement={renderElement}
@@ -98,15 +100,9 @@ function UnitFlow() {
           />
         </Slate>
       </div>
-
-      <div
-        style={{ padding: "20px", border: "1px solid red", marginLeft: "50px" }}
-      >
-        <pre>{JSON.stringify(value, null, 2)}</pre>
-      </div>
     </div>
   );
-}
+};
 
 const Leaf = (props) => {
   let { attributes, children, leaf } = props;
