@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { createEditor } from "slate";
+import { createEditor, Transforms } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import {
   AiBlock,
@@ -11,6 +11,7 @@ import {
   SectionHeader,
   DefaultElement,
 } from "./Elements";
+import { findElementPath } from "../Plugins";
 
 const initialValue = [
   {
@@ -102,7 +103,9 @@ function UnitFlow() {
   const renderElement = useCallback((props) => {
     switch (props.element.type) {
       case "section":
-        return <Section {...props} />;
+        return (
+          <Section {...props} collapsedIconClicked={collapsedIconClicked} />
+        );
       case "sectionHeader":
         return <SectionHeader {...props} />;
       case "sectionBody":
@@ -125,6 +128,19 @@ function UnitFlow() {
   }, []);
 
   const keyDownOps = (event) => {};
+
+  const collapsedIconClicked = (event, element) => {
+    event.preventDefault();
+    const elementPath = findElementPath(editor, element);
+
+    if (elementPath) {
+      Transforms.setNodes(
+        editor,
+        { isCollapsed: !element.isCollapsed },
+        { at: elementPath }
+      );
+    }
+  };
 
   return (
     <div>
