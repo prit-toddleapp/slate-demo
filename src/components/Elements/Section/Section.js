@@ -3,18 +3,22 @@ import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownR
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 
 const Section = (props) => {
-  const { children, element } = props;
-  console.log(children);
+  const { attributes, children, element, collapsedIconClicked } = props;
+  const isCollapsed = element.isCollapsed;
+  //console.log(props);
   return (
-    <div style={{ display: "flex", columnGap: "10px", marginBottom: "16px" }}>
-      <div>
-        {element.isCollapsed ? (
+    <div
+      {...attributes}
+      style={{ display: "flex", columnGap: "10px", marginBottom: "16px" }}
+    >
+      <div onClick={(event) => collapsedIconClicked(event, element)}>
+        {isCollapsed ? (
           <KeyboardArrowDownRoundedIcon />
         ) : (
           <ChevronRightRoundedIcon />
         )}
       </div>
-      <div>{element.isCollapsed ? [children[0]] : children}</div>
+      <div>{isCollapsed ? [children[0]] : children}</div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import classes from "./UnitFlow.module.css";
-import { createEditor } from "slate";
+import { createEditor, Transforms } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import {
   AiBlock,
@@ -13,7 +13,6 @@ import {
   DefaultElement,
 } from "./Elements";
 import { findElementPath, updateNodeChildren } from "../Plugins";
-import { Transforms } from "slate";
 import AddIcon from "@mui/icons-material/Add";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
@@ -160,7 +159,9 @@ function UnitFlow() {
       case "section":
         return (
           <BlockWrapper
-            child={<Section {...props} />}
+            child={
+              <Section {...props} collapsedIconClicked={collapsedIconClicked} />
+            }
             editor={editor}
             {...props}
           />
@@ -205,6 +206,19 @@ function UnitFlow() {
   }, []);
 
   const keyDownOps = (event) => {};
+
+  const collapsedIconClicked = (event, element) => {
+    event.preventDefault();
+    const elementPath = findElementPath(editor, element);
+
+    if (elementPath) {
+      Transforms.setNodes(
+        editor,
+        { isCollapsed: !element.isCollapsed },
+        { at: elementPath }
+      );
+    }
+  };
 
   return (
     <div>
