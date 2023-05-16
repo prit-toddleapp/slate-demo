@@ -18,3 +18,16 @@ export const updateNodeChildren = (editor, path, newChildren) => {
     Transforms.insertNodes(editor, child, { at: [...path, i] });
   }
 };
+
+export const turnInElement = (editor, element, iconType) => {
+  const path = findElementPath(editor, element);
+  updateNodeChildren(editor, path, element.children[0].children);
+  Transforms.setNodes(
+    editor,
+    {
+      type: "resourceBlock",
+      iconUrl: iconType,
+    },
+    { at: path }
+  );
+};
