@@ -5,6 +5,7 @@ export const findElementPath = (editor, element) => {
     at: [],
     match: (n) => n === element,
   });
+  console.log(match[1]);
   return match ? match[1] : null;
 };
 

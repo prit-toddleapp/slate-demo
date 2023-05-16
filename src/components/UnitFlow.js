@@ -109,22 +109,14 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
         },
       ],
     };
-    const path = findElementPath(editor, [], element);
+    const path = findElementPath(editor, element);
     path[path.length - 1] = path[path.length - 1] + 1;
     console.log(path);
     Transforms.insertNodes(editor, newBlock, { at: path });
   };
 
   const handleClick = () => {
-    const path = findElementPath(editor, [], element);
-    console.log(element.children[0].children);
-    console.log({
-      updatedNode: {
-        type: "resourceBlock",
-        iconUrl: "LE",
-        children: element.children[0].children,
-      },
-    });
+    const path = findElementPath(editor, element);
     updateNodeChildren(editor, path, element.children[0].children);
     Transforms.setNodes(
       editor,
