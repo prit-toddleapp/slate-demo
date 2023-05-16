@@ -2,6 +2,7 @@ import { Node, Editor, Transforms } from "slate";
 
 export const findElementPath = (editor, path = [], element) => {
   console.log(editor);
+  console.log({ editor, element });
   if (editor === element) {
     return path;
   }

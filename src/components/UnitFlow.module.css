@@ -1,0 +1,19 @@
+.blockWrapperContainer{
+    display: flex;
+    column-gap: 10px;
+}
+
+.buttonContainer{
+    height: 20px;
+    width: 15px;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    display: flex;
+    cursor: pointer;
+    color: #cdcdcd
+}
+
+.blockWrapperContainer:hover .buttonContainer{
+    visibility: visible;
+}
