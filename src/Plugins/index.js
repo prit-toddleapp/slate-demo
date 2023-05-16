@@ -1,24 +1,11 @@
 import { Node, Editor, Transforms } from "slate";
 
-export const findElementPath = (editor, path = [], element) => {
-  console.log(editor);
-  if (editor === element) {
-    return path;
-  }
-  if (editor.children)
-    for (let i = 0; i < editor.children.length; i++) {
-      const childPath = [...path, i];
-      const child = editor.children[i];
-
-      if (Node.isNode(child)) {
-        const foundPath = findElementPath(child, childPath, element);
-        if (foundPath) {
-          return foundPath;
-        }
-      }
-    }
-
-  return null;
+export const findElementPath = (editor, element) => {
+  const [match] = Editor.nodes(editor, {
+    at: [],
+    match: (n) => n === element,
+  });
+  return match ? match[1] : null;
 };
 
 export const updateNodeChildren = (editor, path, newChildren) => {
