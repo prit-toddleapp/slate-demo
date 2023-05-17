@@ -30,9 +30,10 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
 
   const handleMenuClick = (e) => {
     const path = findElementPath(editor, element);
+    console.log(path, element);
     switch (e.target.textContent) {
       case "Ask Shifu":
-        updateNodeChildren(editor, path, [{ text: "" }]);
+        updateNodeChildren(editor, path, [{ text: "" }], false);
         Transforms.setNodes(
           editor,
           {
@@ -43,24 +44,29 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
         );
         break;
       case "Add new section":
-        updateNodeChildren(editor, path, [
-          {
-            type: "sectionHeader",
-            children: [
-              {
-                text: "",
-              },
-            ],
-          },
-          {
-            type: "newBlock",
-            children: [
-              {
-                text: "",
-              },
-            ],
-          },
-        ]);
+        updateNodeChildren(
+          editor,
+          path,
+          [
+            {
+              type: "sectionHeader",
+              children: [
+                {
+                  text: "",
+                },
+              ],
+            },
+            {
+              type: "newBlock",
+              children: [
+                {
+                  text: "",
+                },
+              ],
+            },
+          ],
+          false
+        );
         Transforms.setNodes(
           editor,
           {
@@ -69,6 +75,7 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
           },
           { at: path }
         );
+
         console.log("path", path);
         Transforms.select(editor, path);
         break;

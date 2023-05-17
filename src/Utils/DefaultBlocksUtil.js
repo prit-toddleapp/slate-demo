@@ -158,6 +158,7 @@ export const menuOptions = {
     { key: "SHIFU", label: "Ask Shifu", id: "SHIFU" },
     { key: "DUPLICATE", label: "Duplicate", id: "DUPLICATE" },
     { key: "DELETE", label: "Delete", id: "DELETE" },
+    { key: "DELETE", label: "Delete Only Section", id: "DELETE" },
   ],
   aiBlock: [
     { key: "SHIFU", label: "Ask Shifu", id: "SHIFU" },

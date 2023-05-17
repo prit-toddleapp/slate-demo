@@ -8,9 +8,17 @@ export const findElementPath = (editor, element) => {
   return match ? match[1] : null;
 };
 
-export const updateNodeChildren = (editor, path, newChildren) => {
-  const range = Editor.range(editor, path);
-  Transforms.delete(editor, { at: range });
+export const updateNodeChildren = (
+  editor,
+  path,
+  newChildren,
+  removeChild = true
+) => {
+  if (removeChild) {
+    const range = Editor.range(editor, path);
+    console.log({ range });
+    Transforms.delete(editor, { at: range });
+  }
 
   for (let i = 0; i < newChildren.length; i++) {
     const child = newChildren[i];

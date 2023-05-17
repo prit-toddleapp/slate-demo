@@ -197,7 +197,7 @@ function UnitFlow() {
   const show = () => {
     console.log(editor.selection);
   };
-
+  console.log(value);
   return (
     <div className={classes.untFlowBlock}>
       <h1>Unit Flow</h1>
