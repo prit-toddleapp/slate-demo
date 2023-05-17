@@ -171,6 +171,15 @@ export const menuOptions = {
     { key: "DUPLICATE", label: "Duplicate", id: "DUPLICATE" },
     { key: "DELETE", label: "Delete", id: "DELETE" },
   ],
+  paragraph: [
+    { key: "SHIFU", label: "Ask Shifu" },
+    { key: "DUPLICATE", label: "Duplicate" },
+    { key: "TURNINSECTION", label: "Turn In to Section" },
+    { key: "TURNINLE", label: "Turn In to LE" },
+    { key: "TURNINFA", label: "Turn In to FA" },
+    { key: "TURNINSA", label: "Turn In to SA" },
+    { key: "DELETE", label: "Delete" },
+  ],
   newBlock: [{ key: "DELETE", label: "Delete", id: "DELETE" }],
 };
 

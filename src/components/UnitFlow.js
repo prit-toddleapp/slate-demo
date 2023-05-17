@@ -23,6 +23,7 @@ import {
   incrementPath,
   decrementPath,
 } from "../Utils/Misc";
+import Paragraph from "./Elements/Paragraph/Paragraph";
 
 function UnitFlow() {
   const [editor] = useState(() => withEditableVoids(withReact(createEditor())));
@@ -71,6 +72,14 @@ function UnitFlow() {
       case "regenerateSearchBox":
         return (
           <RegenerateSearchBox {...props} regenerateBlock={regenerateBlock} />
+        );
+      case "paragraph":
+        return (
+          <BlockWrapper
+            child={<Paragraph {...props} editor={editor} />}
+            editor={editor}
+            {...props}
+          />
         );
       default:
         return (

@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { addNewBlock, findElementPath, turnInElement } from "../../../Plugins";
+import {
+  addNewBlock,
+  findElementPath,
+  turnInElement,
+  updateNodeChildren,
+} from "../../../Plugins";
 import _ from "lodash";
 import classes from "./BlockWrapper.module.css";
 import AddIcon from "@mui/icons-material/Add";
@@ -41,7 +46,10 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
     console.log(e.target.textContent);
     switch (e.target.textContent) {
       case "Ask Shifu":
-        addNewBlock(editor, element);
+        addNewBlock(editor, element, {
+          type: "regenerateSearchBox",
+          children: [{ text: "" }],
+        });
         break;
       case "Duplicate":
         {
@@ -64,6 +72,32 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
         break;
       case "Turn In to SA":
         turnInElement(editor, element, "SA");
+        break;
+      case "Turn In to Section":
+        const path = findElementPath(editor, element);
+        let children = [
+          {
+            type: "sectionHeader",
+            children: element.children,
+          },
+          {
+            type: "newBlock",
+            children: [
+              {
+                text: "",
+              },
+            ],
+          },
+        ];
+        updateNodeChildren(editor, path, children);
+        Transforms.setNodes(
+          editor,
+          {
+            type: "section",
+            isCollapsed: false,
+          },
+          { at: path }
+        );
         break;
       default: {
       }
