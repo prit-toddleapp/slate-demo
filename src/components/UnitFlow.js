@@ -12,12 +12,17 @@ import {
   SectionHeader,
   DefaultElement,
   TextBox,
+  RegenerateSearchBox,
 } from "./Elements";
 import { findElementPath, updateNodeChildren } from "../Plugins";
 import AddIcon from "@mui/icons-material/Add";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
-import { getSectionFromInputText } from "../Utils/Misc";
+import {
+  getSectionFromInputText,
+  incrementPath,
+  decrementPath,
+} from "../Utils/Misc";
 
 const initialValue = [
   {
@@ -39,8 +44,8 @@ const initialValue = [
         //isCollapsed: false, is this appraoch better?
         children: [
           {
-            type: "textBox",
-            children: [{ text: "This is the text box" }],
+            type: "searchBox",
+            children: [{ text: "" }],
           },
           {
             type: "aiBlock",
@@ -109,7 +114,7 @@ const initialValue = [
 const BlockWrapper = ({ editor, element, child, attributes }) => {
   const addNewBlock = () => {
     const newBlock = {
-      type: "textBox",
+      type: "searchBox",
       children: [
         {
           text: "",
@@ -189,8 +194,14 @@ function UnitFlow() {
             {...props}
           />
         );
-      case "textBox":
+      case "searchBox":
         return <TextBox {...props} addNewSection={addNewSection} />;
+      case "loadingSearchBox":
+        return <div>Generating block...</div>;
+      case "regenerateSearchBox":
+        return (
+          <RegenerateSearchBox {...props} regenerateBlock={regenerateBlock} />
+        );
       default:
         return (
           <BlockWrapper
@@ -206,23 +217,84 @@ function UnitFlow() {
     return <Leaf {...props} />;
   }, []);
 
-  const keyDownOps = (event) => {};
+  const keyDownOps = (event) => {
+    if (!event.ctrlKey) return;
+    switch (event.key) {
+      case "Escape":
+        const { selection } = editor;
+        console.log(selection);
+        Transforms.removeNodes(editor);
+        break;
+      case "Enter":
+        console.log("Enter pressed");
+        break;
+      default:
+        return;
+    }
+  };
+
+  const fakeApiCall = (data) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        let newSection = getSectionFromInputText(data);
+        if (!newSection) reject("Invalid input");
+
+        resolve(newSection);
+      }, 1500); // resolves after 2 seconds
+    });
+  };
 
   const addNewSection = (inputText, element) => {
-    let newSection = getSectionFromInputText(inputText);
     let elementPath = findElementPath(editor, element);
-    const lastElement = elementPath[elementPath.length - 1];
-    let newSectionPath = [...elementPath];
-    newSectionPath[newSectionPath.length - 1] =
-      lastElement > 1 ? lastElement - 1 : 0;
+    //Transforms.delete(editor, { at: elementPath });
+    Transforms.insertNodes(
+      editor,
+      { type: "loadingSearchBox", children: [{ text: "Generating block..." }] },
+      { at: elementPath }
+    );
 
-    console.log(elementPath);
-    console.log(newSectionPath);
-    if (newSection) {
-      // const range = Editor.range(editor, elementPath);
-      Transforms.delete(editor, { at: elementPath });
-      Transforms.insertNodes(editor, newSection, { at: elementPath });
-    }
+    fakeApiCall(inputText)
+      .then((newSection) => {
+        console.log(newSection);
+        Transforms.delete(editor, { at: elementPath });
+        Transforms.delete(editor, { at: elementPath });
+        Transforms.insertNodes(editor, newSection, {
+          at: elementPath,
+        });
+        const range = Editor.range(editor, elementPath);
+        Transforms.select(editor, range);
+        Transforms.insertNodes(
+          editor,
+          { type: "regenerateSearchBox", children: [{ text: "" }] },
+          { at: incrementPath(elementPath) }
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+        Transforms.delete(editor, { at: elementPath });
+      });
+
+    // let elementPath = findElementPath(editor, element);
+    // const lastElement = elementPath[elementPath.length - 1];
+    // let newSectionPath = [...elementPath];
+    // newSectionPath[newSectionPath.length - 1] =
+    //   lastElement > 1 ? lastElement - 1 : 0;
+
+    // console.log(elementPath);
+    // console.log(newSectionPath);
+    // if (newSection) {
+    //   // const range = Editor.range(editor, elementPath);
+    //   Transforms.delete(editor, { at: elementPath });
+    //   Transforms.insertNodes(editor, newSection, { at: elementPath });
+    // }
+  };
+
+  const regenerateBlock = (inputText, element) => {
+    let elementPath = findElementPath(editor, element);
+    Transforms.delete(editor, { at: decrementPath(elementPath) });
+    console.log(inputText);
+    console.log(element);
+    addNewSection(inputText, element);
   };
 
   const collapsedIconClicked = (event, element) => {
@@ -238,10 +310,21 @@ function UnitFlow() {
     }
   };
 
+  const select = () => {
+    const range = Editor.range(editor, [0, 0, 0]);
+    Transforms.select(editor, range);
+  };
+
+  const show = () => {
+    console.log(editor.selection);
+  };
+
   return (
     <div>
       <div style={{ padding: "20px", border: "1px solid black" }}>
         <Slate editor={editor} value={value} onChange={(v) => setValue(v)}>
+          {/* <button onClick={select}>select</button>
+          <button onClick={show}>give selection</button> */}
           <Editable
             renderElement={renderElement}
             renderLeaf={renderLeaf}
@@ -264,7 +347,7 @@ function UnitFlow() {
 const withEditableVoids = (editor) => {
   const { isVoid } = editor;
 
-  const VOID_TYPES = ["textBox"];
+  const VOID_TYPES = ["searchBox"];
   editor.isVoid = (element) => {
     return VOID_TYPES.includes(element.type) ? true : isVoid(element);
   };

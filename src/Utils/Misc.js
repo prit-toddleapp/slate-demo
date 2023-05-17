@@ -28,3 +28,19 @@ export const getSectionFromInputText = (inputText) => {
       return null;
   }
 };
+
+export const incrementPath = (path) => {
+  const newPath = [...path];
+  newPath[newPath.length - 1] += 1;
+  return newPath;
+};
+
+export const decrementPath = (path) => {
+  const newPath = [...path];
+  newPath[newPath.length - 1] -= 1;
+  if (newPath[newPath.length - 1] < 0) {
+    newPath[newPath.length - 1] = 0;
+  }
+  console.log(newPath);
+  return newPath;
+};

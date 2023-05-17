@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import { TextField, Button } from "@mui/material";
-import ForwardIcon from "@mui/icons-material/Forward";
 
-const TextBox = (props) => {
-  const { attributes, children, element, collapsedIconClicked, addNewSection } =
-    props;
+const RegenerateSearchBox = (props) => {
+  const {
+    attributes,
+    children,
+    element,
+    collapsedIconClicked,
+    regenerateBlock,
+  } = props;
 
   const [inputValue, setInputValue] = useState("");
 
-  const onButtonClick = (event) => {
+  const regenerateButtonClicked = (event) => {
     event.preventDefault();
-    addNewSection(inputValue, element);
+    regenerateBlock(inputValue, element);
   };
 
   return (
@@ -29,18 +33,18 @@ const TextBox = (props) => {
     >
       <input
         type="text"
-        placeholder="Enter text here"
+        placeholder="Add more details here and regenerate this response or press ‘Esc’"
         value={inputValue}
-        style={{ outline: "none", border: "0px" }}
+        style={{ outline: "none", border: "0px", width: "80%" }}
         onChange={(e) => {
           setInputValue(e.target.value);
         }}
       />
-      <Button variant="contained" onClick={onButtonClick}>
-        Search
+      <Button variant="contained" onClick={regenerateButtonClicked}>
+        Regenerate
       </Button>
     </div>
   );
 };
 
-export default TextBox;
+export default RegenerateSearchBox;
