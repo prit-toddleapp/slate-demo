@@ -45,3 +45,17 @@ export const addNewBlock = (editor, element) => {
   const path = findElementPath(editor, element);
   Transforms.insertNodes(editor, newBlock, { at: incrementPath(path) });
 };
+
+export const addShifuSearchBox = (editor, element) => {
+  const newBlock = {
+    type: "searchBox",
+    children: [
+      {
+        text: "",
+      },
+    ],
+  };
+  const path = findElementPath(editor, element);
+  Transforms.delete(editor, { at: path });
+  Transforms.insertNodes(editor, newBlock, { at: path });
+};

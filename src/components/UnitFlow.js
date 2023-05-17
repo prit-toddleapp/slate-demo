@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import classes from "./UnitFlow.module.css";
 import { createEditor, Transforms, Editor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
@@ -28,6 +28,7 @@ import {
 function UnitFlow() {
   const [editor] = useState(() => withEditableVoids(withReact(createEditor())));
   const [value, setValue] = useState(initialValue);
+  const abortController = useRef(null);
 
   const renderElement = useCallback((props) => {
     switch (props.element.type) {
@@ -113,20 +114,10 @@ function UnitFlow() {
     }
   };
 
-  const fakeApiCall = (data) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        let newSection = getSectionFromInputText(data);
-        if (!newSection) reject("Invalid input");
-
-        resolve(newSection);
-      }, 3000);
-    });
-  };
-
   const addNewSection = (inputText, element) => {
+    abortController.current = new AbortController();
+
     let elementPath = findElementPath(editor, element);
-    //Transforms.delete(editor, { at: elementPath });
     Transforms.delete(editor, { at: elementPath });
     Transforms.insertNodes(
       editor,
@@ -134,8 +125,14 @@ function UnitFlow() {
       { at: elementPath }
     );
 
-    fakeApiCall(inputText)
-      .then((newSection) => {
+    fetch("https://hub.dummyapis.com/delay?seconds=2", {
+      signal: abortController.current.signal,
+    })
+      .then((data) => {
+        let newSection = getSectionFromInputText(inputText);
+
+        if (!newSection) throw new Error("Invalid input");
+
         Transforms.delete(editor, { at: elementPath });
         Transforms.insertNodes(editor, newSection, {
           at: elementPath,
@@ -150,22 +147,22 @@ function UnitFlow() {
       })
       .catch((error) => {
         console.log(error);
+        //what is the error behaviour??
         Transforms.delete(editor, { at: elementPath });
+      })
+      .finally(() => {
+        console.log("finally");
       });
   };
 
   const regenerateBlock = (inputText, element) => {
     let elementPath = findElementPath(editor, element);
     Transforms.delete(editor, { at: decrementPath(elementPath) });
-    console.log(inputText);
-    console.log(element);
     addNewSection(inputText, element);
   };
 
-  const stopGeneratingBlock = () => {
-    //abort api call
-    console.log("stop generating block");
-  };
+  const stopGeneratingBlock = () =>
+    abortController.current && abortController.current.abort();
 
   const collapsedIconClicked = (event, element) => {
     event.preventDefault();

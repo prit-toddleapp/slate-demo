@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import { newBlockMenuOptions } from "../../../Utils/DefaultBlocksUtil";
 import {
   addNewBlock,
+  addShifuSearchBox,
   findElementPath,
   updateNodeChildren,
 } from "../../../Plugins";
@@ -31,7 +32,7 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
   const handleMenuClick = (e) => {
     switch (e.target.textContent) {
       case "Ask Shifu":
-        addNewBlock(editor, element);
+        addShifuSearchBox(editor, element);
         break;
       case "Add new section":
         const path = findElementPath(editor, element);
