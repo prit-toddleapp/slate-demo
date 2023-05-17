@@ -11,8 +11,11 @@ const Section = (props) => {
       {...attributes}
       style={{ display: "flex", columnGap: "10px", marginBottom: "16px" }}
     >
-      <div onClick={(event) => collapsedIconClicked(event, element)}>
-        {isCollapsed ? (
+      <div
+        onClick={(event) => collapsedIconClicked(event, element)}
+        style={{ cursor: "pointer" }}
+      >
+        {!isCollapsed ? (
           <KeyboardArrowDownRoundedIcon />
         ) : (
           <ChevronRightRoundedIcon />

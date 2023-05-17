@@ -14,145 +14,15 @@ import {
   TextBox,
   RegenerateSearchBox,
 } from "./Elements";
-import { findElementPath, updateNodeChildren } from "../Plugins";
-import AddIcon from "@mui/icons-material/Add";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { findElementPath } from "../Plugins";
+import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
+import { initialValue } from "../Utils/DefaultBlocksUtil";
 
 import {
   getSectionFromInputText,
   incrementPath,
   decrementPath,
 } from "../Utils/Misc";
-
-const initialValue = [
-  {
-    type: "section",
-    isCollapsed: false,
-    collapsedIcon: ">",
-    expandedIcon: "V",
-    children: [
-      {
-        type: "sectionHeader",
-        children: [
-          {
-            text: "This is the header",
-          },
-        ],
-      },
-      {
-        type: "sectionBody",
-        //isCollapsed: false, is this appraoch better?
-        children: [
-          {
-            type: "searchBox",
-            children: [{ text: "" }],
-          },
-          {
-            type: "aiBlock",
-            children: [
-              {
-                type: "blockTitle",
-                children: [{ text: "This is the title paragraph" }],
-              },
-              {
-                type: "blockSubtext",
-                children: [{ text: "This is the subtext paragraph" }],
-              },
-            ],
-          },
-          {
-            type: "resourceBlock",
-            iconUrl: "LE",
-            children: [{ text: "Resource block" }],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    type: "section",
-    isCollapsed: true,
-    collapsedIcon: ">",
-    expandedIcon: "V",
-    children: [
-      {
-        type: "sectionHeader",
-        children: [
-          {
-            text: "This is the header",
-          },
-        ],
-      },
-      {
-        type: "sectionBody",
-        //isCollapsed: false, is this appraoch better?
-        children: [
-          {
-            type: "aiBlock",
-            children: [
-              {
-                type: "blockTitle",
-                children: [{ text: "This is the title paragraph" }],
-              },
-              {
-                type: "blockSubtext",
-                children: [{ text: "This is the subtext paragraph" }],
-              },
-            ],
-          },
-          {
-            type: "resourceBlock",
-            iconUrl: "LE",
-            children: [{ text: "Resource block" }],
-          },
-        ],
-      },
-    ],
-  },
-];
-
-const BlockWrapper = ({ editor, element, child, attributes }) => {
-  const addNewBlock = () => {
-    const newBlock = {
-      type: "searchBox",
-      children: [
-        {
-          text: "",
-        },
-      ],
-    };
-    const path = findElementPath(editor, element);
-    path[path.length - 1] = path[path.length - 1] + 1;
-
-    Transforms.insertNodes(editor, newBlock, { at: path });
-  };
-
-  const handleClick = () => {
-    const path = findElementPath(editor, element);
-    updateNodeChildren(editor, path, element.children[0].children);
-    Transforms.setNodes(
-      editor,
-      {
-        type: "resourceBlock",
-        iconUrl: "LE",
-      },
-      { at: path }
-    );
-  };
-
-  return (
-    <div className={classes.blockWrapperContainer} {...attributes}>
-      <div onClick={addNewBlock} className={classes.buttonContainer}>
-        <AddIcon fontSize="small" />
-      </div>
-      <div className={classes.buttonContainer} onClick={handleClick}>
-        <DragIndicatorIcon fontSize="small" />
-      </div>
-
-      <div>{child}</div>
-    </div>
-  );
-};
 
 function UnitFlow() {
   const [editor] = useState(() => withEditableVoids(withReact(createEditor())));
@@ -205,7 +75,7 @@ function UnitFlow() {
       default:
         return (
           <BlockWrapper
-            child={<DefaultElement {...props} />}
+            child={<DefaultElement {...props} editor={editor} />}
             editor={editor}
             {...props}
           />
@@ -320,8 +190,9 @@ function UnitFlow() {
   };
 
   return (
-    <div>
-      <div style={{ padding: "20px", border: "1px solid black" }}>
+    <div className={classes.untFlowBlock}>
+      <h1>Unit Flow</h1>
+      <div className={classes.slateContainer}>
         <Slate editor={editor} value={value} onChange={(v) => setValue(v)}>
           {/* <button onClick={select}>select</button>
           <button onClick={show}>give selection</button> */}
@@ -333,12 +204,6 @@ function UnitFlow() {
             }}
           />
         </Slate>
-      </div>
-
-      <div
-        style={{ padding: "20px", border: "1px solid red", marginLeft: "50px" }}
-      >
-        <pre>{JSON.stringify(value, null, 2)}</pre>
       </div>
     </div>
   );
