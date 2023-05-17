@@ -26,7 +26,7 @@ import {
 } from "../Utils/Misc";
 
 function UnitFlow() {
-  const [editor] = useState(() => withEditableVoids(withReact(createEditor())));
+  const [editor] = useState(() => withReact(createEditor()));
   const [value, setValue] = useState(initialValue);
   const abortController = useRef(null);
 
@@ -80,9 +80,6 @@ function UnitFlow() {
             stopGeneratingBlock={stopGeneratingBlock}
           />
         );
-      case "loadingSearchBox":
-        //return <LoadingSearchBox {...props} />;
-        return <div>Generating block...</div>;
       default:
         return (
           <BlockWrapper
@@ -206,16 +203,16 @@ function UnitFlow() {
   );
 }
 
-const withEditableVoids = (editor) => {
-  const { isVoid } = editor;
+// const withEditableVoids = (editor) => {
+//   const { isVoid } = editor;
 
-  const VOID_TYPES = ["searchBox"];
-  editor.isVoid = (element) => {
-    return VOID_TYPES.includes(element.type) ? true : isVoid(element);
-  };
+//   const VOID_TYPES = ["searchBox"];
+//   editor.isVoid = (element) => {
+//     return VOID_TYPES.includes(element.type) ? true : isVoid(element);
+//   };
 
-  return editor;
-};
+//   return editor;
+// };
 
 const Leaf = (props) => {
   let { attributes, children, leaf } = props;
