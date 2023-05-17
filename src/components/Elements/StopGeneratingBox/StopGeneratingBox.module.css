@@ -1,0 +1,9 @@
+.stopGeneratingBoxContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  box-shadow: 0px 5px 10px rgba(0, 46, 57, 0.15);
+  padding: 10px;
+  border-radius: 5px;
+  min-width: 700px;
+}

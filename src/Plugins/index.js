@@ -1,4 +1,5 @@
 import { Editor, Transforms } from "slate";
+import { incrementPath } from "../Utils/Misc";
 
 export const findElementPath = (editor, element) => {
   const [match] = Editor.nodes(editor, {
@@ -42,6 +43,5 @@ export const addNewBlock = (editor, element) => {
     ],
   };
   const path = findElementPath(editor, element);
-  path[path.length - 1] = path[path.length - 1] + 1;
-  Transforms.insertNodes(editor, newBlock, { at: path });
+  Transforms.insertNodes(editor, newBlock, { at: incrementPath(path) });
 };

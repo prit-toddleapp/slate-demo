@@ -85,6 +85,10 @@ export const initialValue = [
         //isCollapsed: false, is this appraoch better?
         children: [
           {
+            type: "searchBox",
+            children: [{ text: "" }],
+          },
+          {
             type: "aiBlock",
             children: [
               {

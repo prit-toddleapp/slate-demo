@@ -13,6 +13,7 @@ import {
   DefaultElement,
   TextBox,
   RegenerateSearchBox,
+  StopGeneratingBox,
 } from "./Elements";
 import { findElementPath } from "../Plugins";
 import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
@@ -66,12 +67,21 @@ function UnitFlow() {
         );
       case "searchBox":
         return <TextBox {...props} addNewSection={addNewSection} />;
-      case "loadingSearchBox":
-        return <div>Generating block...</div>;
+
       case "regenerateSearchBox":
         return (
           <RegenerateSearchBox {...props} regenerateBlock={regenerateBlock} />
         );
+      case "stopGeneratingBox":
+        return (
+          <StopGeneratingBox
+            {...props}
+            stopGeneratingBlock={stopGeneratingBlock}
+          />
+        );
+      case "loadingSearchBox":
+        //return <LoadingSearchBox {...props} />;
+        return <div>Generating block...</div>;
       default:
         return (
           <BlockWrapper
@@ -110,23 +120,22 @@ function UnitFlow() {
         if (!newSection) reject("Invalid input");
 
         resolve(newSection);
-      }, 1500); // resolves after 2 seconds
+      }, 3000);
     });
   };
 
   const addNewSection = (inputText, element) => {
     let elementPath = findElementPath(editor, element);
     //Transforms.delete(editor, { at: elementPath });
+    Transforms.delete(editor, { at: elementPath });
     Transforms.insertNodes(
       editor,
-      { type: "loadingSearchBox", children: [{ text: "Generating block..." }] },
+      { type: "stopGeneratingBox", children: [{ text: "" }] },
       { at: elementPath }
     );
 
     fakeApiCall(inputText)
       .then((newSection) => {
-        console.log(newSection);
-        Transforms.delete(editor, { at: elementPath });
         Transforms.delete(editor, { at: elementPath });
         Transforms.insertNodes(editor, newSection, {
           at: elementPath,
@@ -143,20 +152,6 @@ function UnitFlow() {
         console.log(error);
         Transforms.delete(editor, { at: elementPath });
       });
-
-    // let elementPath = findElementPath(editor, element);
-    // const lastElement = elementPath[elementPath.length - 1];
-    // let newSectionPath = [...elementPath];
-    // newSectionPath[newSectionPath.length - 1] =
-    //   lastElement > 1 ? lastElement - 1 : 0;
-
-    // console.log(elementPath);
-    // console.log(newSectionPath);
-    // if (newSection) {
-    //   // const range = Editor.range(editor, elementPath);
-    //   Transforms.delete(editor, { at: elementPath });
-    //   Transforms.insertNodes(editor, newSection, { at: elementPath });
-    // }
   };
 
   const regenerateBlock = (inputText, element) => {
@@ -165,6 +160,11 @@ function UnitFlow() {
     console.log(inputText);
     console.log(element);
     addNewSection(inputText, element);
+  };
+
+  const stopGeneratingBlock = () => {
+    //abort api call
+    console.log("stop generating block");
   };
 
   const collapsedIconClicked = (event, element) => {

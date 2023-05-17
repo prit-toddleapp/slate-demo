@@ -8,6 +8,7 @@ import SectionHeader from "./SectionHeader/SectionHeader";
 import DefaultElement from "./DefaultElement/DefaultElement";
 import TextBox from "./TextBox/TextBox";
 import RegenerateSearchBox from "./RegenerateSearchBox/RegenerateSearchBox";
+import StopGeneratingBox from "./StopGeneratingBox/StopGeneratingBox";
 
 export {
   AiBlock,
@@ -20,4 +21,5 @@ export {
   DefaultElement,
   TextBox,
   RegenerateSearchBox,
+  StopGeneratingBox,
 };
