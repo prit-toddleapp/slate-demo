@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Transforms } from "slate";
 import { TextField, Button } from "@mui/material";
-import { findElementPath } from "../../../Plugins";
+import { findElementPath, deleteNode } from "../../../Plugins";
 
 const RegenerateSearchBox = (props) => {
   const { editor, attributes, children, element, regenerateBlock } = props;
-  const inputBoxRef = React.useRef();
+  const inputBoxRef = React.useRef(null);
   const [inputValue, setInputValue] = useState("");
 
   const regenerateButtonClicked = (event) => {
+    console.log("clicked");
     event.preventDefault();
+    event.stopPropagation();
     regenerateBlock(inputValue, element);
   };
 
@@ -18,23 +20,8 @@ const RegenerateSearchBox = (props) => {
   }, []);
 
   const keyDownOps = (event) => {
-    //if (!event.ctrlKey) return;
     switch (event.key) {
       case "Escape":
-        //DO NOT DELETE NODES
-        // const { selection } = editor;
-        // console.log(selection);
-        // console.log(findElementPath(editor, element));
-        // Transforms.removeNodes(editor, {
-        //   at: [
-        //     [0, 1, 2],
-        //     [0, 1, 3],
-        //   ],
-        // });
-        // Transforms.removeNodes(editor, {
-        //   at: findElementPath(editor, element),
-        // });
-
         Transforms.deselect(editor);
         console.log(element);
         Transforms.removeNodes(editor, {
@@ -42,12 +29,14 @@ const RegenerateSearchBox = (props) => {
         });
 
         break;
-      case "Enter":
-        console.log("Enter pressed");
-        break;
       default:
         return;
     }
+  };
+
+  const onSearchBoxBlur = (event) => {
+    console.log("blur");
+    deleteNode(editor, element);
   };
 
   return (
@@ -75,9 +64,10 @@ const RegenerateSearchBox = (props) => {
         onChange={(e) => {
           setInputValue(e.target.value);
         }}
+        onBlur={onSearchBoxBlur}
         ref={inputBoxRef}
       />
-      <Button variant="contained" onClick={regenerateButtonClicked}>
+      <Button variant="contained" onMouseDown={regenerateButtonClicked}>
         Regenerate
       </Button>
     </div>

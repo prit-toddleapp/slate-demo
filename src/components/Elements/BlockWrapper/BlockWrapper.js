@@ -69,7 +69,6 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
   };
 
   const handleMenuClick = (e) => {
-    console.log(e.target.textContent);
     switch (e.target.textContent) {
       case "Ask Shifu":
         addNewBlock(editor, element, {

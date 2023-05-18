@@ -76,6 +76,6 @@ export const decrementPath = (path, n = 1) => {
   if (newPath[newPath.length - 1] < 0) {
     newPath[newPath.length - 1] = 0;
   }
-  console.log(newPath);
+
   return newPath;
 };

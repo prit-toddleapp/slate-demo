@@ -106,3 +106,8 @@ export const isEntireNodeSelected = (editor, element) => {
 
   return !(isNodeAnchorBackward || isNodeFocusForward);
 };
+
+export const deleteNode = (editor, element) => {
+  const path = findElementPath(editor, element);
+  Transforms.delete(editor, { at: path });
+};

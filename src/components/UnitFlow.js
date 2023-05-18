@@ -69,7 +69,9 @@ function UnitFlow() {
           />
         );
       case "searchBox":
-        return <TextBox {...props} addNewSection={addNewSection} />;
+        return (
+          <TextBox {...props} editor={editor} addNewSection={addNewSection} />
+        );
 
       case "regenerateSearchBox":
         return (
@@ -126,6 +128,14 @@ function UnitFlow() {
     // }
   };
 
+  const clickOps = (event) => {
+    if (event.shiftKey) {
+      if (event.button === 0) {
+        console.log(editor.selection);
+      }
+    }
+  };
+
   const addNewSection = (inputText, element) => {
     abortController.current = new AbortController();
 
@@ -166,9 +176,6 @@ function UnitFlow() {
         console.log(error);
         //what is the error behaviour??
         Transforms.delete(editor, { at: elementPath });
-      })
-      .finally(() => {
-        console.log("finally");
       });
   };
 
@@ -208,7 +215,7 @@ function UnitFlow() {
     console.log(editor.selection);
     console.log(Editor.unhangRange(editor, editor.selection));
   };
-  console.log(value);
+
   return (
     <div className={classes.untFlowBlock}>
       <h1>Unit Flow</h1>
@@ -221,6 +228,9 @@ function UnitFlow() {
             renderLeaf={renderLeaf}
             onKeyDown={(event) => {
               keyDownOps(event);
+            }}
+            onClick={(event) => {
+              clickOps(event);
             }}
           />
         </Slate>
