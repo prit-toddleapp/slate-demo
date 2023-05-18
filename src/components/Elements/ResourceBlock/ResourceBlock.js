@@ -1,20 +1,16 @@
 import React from "react";
+import classes from "./ResourceBlock.module.css";
 
 const ResourceBlock = (props) => {
   const { element } = props;
   return (
     <div
       {...props.attributes}
-      style={{
-        display: "flex",
-        marginBottom: "12px",
-        columnGap: "10px",
-        fontWeight: "500",
-        fontSize: "16px",
-      }}
+      contentEditable={false}
+      className={classes.ResourceBlockContainer}
     >
       <div style={{ color: "blue" }}>{element.iconUrl}</div>
-      <div>{props.children}</div>
+      <div className={classes.textCotainer}>{props.children}</div>
     </div>
   );
 };

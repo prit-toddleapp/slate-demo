@@ -25,6 +25,7 @@ import {
   incrementPath,
   decrementPath,
 } from "../Utils/Misc";
+import Paragraph from "./Elements/Paragraph/Paragraph";
 
 function UnitFlow() {
   const [editor] = useState(() => withReact(createEditor()));
@@ -83,6 +84,14 @@ function UnitFlow() {
           <StopGeneratingBox
             {...props}
             stopGeneratingBlock={stopGeneratingBlock}
+          />
+        );
+      case "paragraph":
+        return (
+          <BlockWrapper
+            child={<Paragraph {...props} editor={editor} />}
+            editor={editor}
+            {...props}
           />
         );
       default:
@@ -199,7 +208,7 @@ function UnitFlow() {
     console.log(editor.selection);
     console.log(Editor.unhangRange(editor, editor.selection));
   };
-
+  console.log(value);
   return (
     <div className={classes.untFlowBlock}>
       <h1>Unit Flow</h1>

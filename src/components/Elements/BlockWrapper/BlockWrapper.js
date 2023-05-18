@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { addNewBlock, findElementPath, turnInElement } from "../../../Plugins";
+import {
+  addNewBlock,
+  findElementPath,
+  turnInElement,
+  updateNodeChildren,
+} from "../../../Plugins";
 import _ from "lodash";
 import classes from "./BlockWrapper.module.css";
 import AddIcon from "@mui/icons-material/Add";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import { Transforms } from "slate";
+import { Transforms, Editor } from "slate";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
@@ -14,6 +19,32 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
   const [visibility, setVisibility] = useState("hidden");
   const [anchorEl, setAnchorEl] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const unwrapSectionBlocks = (editor, path) => {
+    const [, sectionPath] = Editor.node(editor, path);
+    const [, sectionBodyPath] = Editor.node(editor, [...sectionPath, 1]);
+    console.log({ sectionBodyPath });
+    Transforms.liftNodes(editor, { at: sectionBodyPath, voids: true });
+    Transforms.removeNodes(editor, { at: sectionPath });
+  };
+
+  const unwrapSectionBlocksRecursive = (editor, path) => {
+    const [node] = Editor.node(editor, path);
+
+    if (node.type === "section") {
+      unwrapSectionBlocks(editor, path);
+      return;
+    }
+
+    for (let i = 0; i < node.children.length; i++) {
+      const childPath = [...path, i];
+      unwrapSectionBlocksRecursive(editor, childPath);
+    }
+  };
+
+  const handleUnwrapSectionBlocks = (path) => {
+    unwrapSectionBlocksRecursive(editor, path);
+  };
 
   const onMouseOver = (e) => {
     e.stopPropagation();
@@ -41,7 +72,10 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
     console.log(e.target.textContent);
     switch (e.target.textContent) {
       case "Ask Shifu":
-        addNewBlock(editor, element);
+        addNewBlock(editor, element, {
+          type: "regenerateSearchBox",
+          children: [{ text: "" }],
+        });
         break;
       case "Duplicate":
         {
@@ -56,6 +90,12 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
           Transforms.removeNodes(editor, { at: path });
         }
         break;
+      case "Delete Only Section":
+        {
+          const path = findElementPath(editor, element);
+          handleUnwrapSectionBlocks(path);
+        }
+        break;
       case "Turn In to LE":
         turnInElement(editor, element, "LE");
         break;
@@ -65,6 +105,33 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
       case "Turn In to SA":
         turnInElement(editor, element, "SA");
         break;
+      case "Turn In to Section":
+        const path = findElementPath(editor, element);
+        let children = [
+          {
+            type: "sectionHeader",
+            children: element.children,
+          },
+          {
+            type: "newBlock",
+            children: [
+              {
+                text: "",
+              },
+            ],
+          },
+        ];
+        updateNodeChildren(editor, path, children);
+        Transforms.setNodes(
+          editor,
+          {
+            type: "section",
+            isCollapsed: false,
+          },
+          { at: path }
+        );
+        break;
+
       default: {
       }
     }

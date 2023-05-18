@@ -30,22 +30,47 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
   };
 
   const handleMenuClick = (e) => {
+    const path = findElementPath(editor, element);
+    console.log(path, element);
     switch (e.target.textContent) {
       case "Ask Shifu":
-        addShifuSearchBox(editor, element);
+        //Op1
+        //addShifuSearchBox(editor, element);
+        //Op2
+        updateNodeChildren(editor, path, [{ text: "" }], false);
+        Transforms.setNodes(
+          editor,
+          {
+            type: "searchBox",
+            children: [{ text: "" }],
+          },
+          { at: path }
+        );
         break;
       case "Add new section":
-        const path = findElementPath(editor, element);
-        updateNodeChildren(editor, path, [
-          {
-            type: "sectionHeader",
-            children: [
-              {
-                text: "",
-              },
-            ],
-          },
-        ]);
+        updateNodeChildren(
+          editor,
+          path,
+          [
+            {
+              type: "sectionHeader",
+              children: [
+                {
+                  text: "",
+                },
+              ],
+            },
+            {
+              type: "newBlock",
+              children: [
+                {
+                  text: "",
+                },
+              ],
+            },
+          ],
+          false
+        );
         Transforms.setNodes(
           editor,
           {
@@ -54,12 +79,29 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
           },
           { at: path }
         );
+
+        console.log("path", path);
+        Transforms.select(editor, path);
         break;
       default:
         addNewBlock(editor, element);
         break;
     }
     handleClose();
+  };
+
+  const updateBlock = () => {
+    const path = findElementPath(editor, element);
+
+    Transforms.setNodes(
+      editor,
+      {
+        type: "paragraph",
+      },
+      { at: path }
+    );
+
+    Transforms.select(editor, path);
   };
 
   return (
@@ -101,7 +143,9 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
           ))}
         </Menu>
       </div>
-      {children}
+      <div className={classes.placeholder} onClick={updateBlock}>
+        {"Click on the [+] button or directly start typing here"}
+      </div>
     </div>
   );
 };

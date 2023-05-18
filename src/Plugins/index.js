@@ -6,13 +6,20 @@ export const findElementPath = (editor, element) => {
     at: [],
     match: (n) => n === element,
   });
-  console.log(match[1]);
   return match ? match[1] : null;
 };
 
-export const updateNodeChildren = (editor, path, newChildren) => {
-  const range = Editor.range(editor, path);
-  Transforms.delete(editor, { at: range });
+export const updateNodeChildren = (
+  editor,
+  path,
+  newChildren,
+  removeChild = true
+) => {
+  if (removeChild) {
+    const range = Editor.range(editor, path);
+    console.log({ range });
+    Transforms.delete(editor, { at: range });
+  }
 
   for (let i = 0; i < newChildren.length; i++) {
     const child = newChildren[i];
@@ -22,7 +29,10 @@ export const updateNodeChildren = (editor, path, newChildren) => {
 
 export const turnInElement = (editor, element, iconType) => {
   const path = findElementPath(editor, element);
-  updateNodeChildren(editor, path, element.children[0].children);
+  let children = [];
+  if (element.type === "aiBlock") children = element.children[0].children;
+  else children = element.children;
+  updateNodeChildren(editor, path, children);
   Transforms.setNodes(
     editor,
     {
@@ -33,17 +43,20 @@ export const turnInElement = (editor, element, iconType) => {
   );
 };
 
-export const addNewBlock = (editor, element) => {
-  const newBlock = {
+export const addNewBlock = (
+  editor,
+  element,
+  block = {
     type: "newBlock",
     children: [
       {
         text: "",
       },
     ],
-  };
+  }
+) => {
   const path = findElementPath(editor, element);
-  Transforms.insertNodes(editor, newBlock, { at: incrementPath(path) });
+  Transforms.insertNodes(editor, block, { at: incrementPath(path) });
 };
 
 export const addShifuSearchBox = (editor, element) => {
