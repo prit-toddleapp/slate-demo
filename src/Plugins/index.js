@@ -1,5 +1,6 @@
-import { Editor, Transforms } from "slate";
+import { Editor, Transforms, Range } from "slate";
 import { incrementPath } from "../Utils/Misc";
+import _ from "lodash";
 
 export const findElementPath = (editor, element) => {
   const [match] = Editor.nodes(editor, {
@@ -71,4 +72,37 @@ export const addShifuSearchBox = (editor, element) => {
   const path = findElementPath(editor, element);
   Transforms.delete(editor, { at: path });
   Transforms.insertNodes(editor, newBlock, { at: path });
+};
+
+//there is some editor.selection
+//check if the element's range in entirely included in the selection
+export const isEntireNodeSelected = (editor, element) => {
+  const { selection } = editor;
+  if (!selection) {
+    return false;
+  }
+
+  const path = findElementPath(editor, element);
+  const nodeRange = Editor.range(editor, path);
+
+  let { anchor: anchorSelection, focus: focusSelection } = selection;
+  let { anchor: anchorNodeRange, focus: focusNodeRange } = nodeRange;
+
+  if (Range.isBackward(selection)) {
+    [anchorSelection, focusSelection] = [focusSelection, anchorSelection];
+  }
+
+  //for equal objs, Range.isBackward gives false but Range.isForward gives true
+  const isNodeAnchorBackward = Range.isBackward({
+    anchor: anchorSelection,
+    focus: anchorNodeRange,
+  });
+  const isNodeFocusForward = _.isEqual(focusSelection, focusNodeRange)
+    ? false
+    : Range.isForward({
+        anchor: focusSelection,
+        focus: focusNodeRange,
+      });
+
+  return !(isNodeAnchorBackward || isNodeFocusForward);
 };
