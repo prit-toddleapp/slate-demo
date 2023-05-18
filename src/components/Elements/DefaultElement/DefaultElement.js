@@ -35,17 +35,17 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
     switch (e.target.textContent) {
       case "Ask Shifu":
         //Op1
-        //addShifuSearchBox(editor, element);
+        addShifuSearchBox(editor, element);
         //Op2
-        updateNodeChildren(editor, path, [{ text: "" }], false);
-        Transforms.setNodes(
-          editor,
-          {
-            type: "searchBox",
-            children: [{ text: "" }],
-          },
-          { at: path }
-        );
+        // updateNodeChildren(editor, path, [{ text: "" }], false);
+        // Transforms.setNodes(
+        //   editor,
+        //   {
+        //     type: "searchBox",
+        //     children: [{ text: "" }],
+        //   },
+        //   { at: path }
+        // );
         break;
       case "Add new section":
         updateNodeChildren(
