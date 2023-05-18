@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button } from "@mui/material";
 import ForwardIcon from "@mui/icons-material/Forward";
+import classes from "./TextBox.module.css";
 
 const TextBox = (props) => {
   const { attributes, children, element, collapsedIconClicked, addNewSection } =
@@ -17,15 +18,16 @@ const TextBox = (props) => {
     <div
       {...attributes}
       contentEditable={false} //important; else UI will break if tried to edit
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        marginBottom: "12px",
-        boxShadow: "0px 5px 10px rgba(0, 46, 57, 0.15)",
-        padding: "10px",
-        borderRadius: "5px",
-        minWidth: "700px",
-      }}
+      className={classes.textBoxContainer}
+      // style={{
+      //   display: "flex",
+      //   justifyContent: "space-between",
+      //   marginBottom: "12px",
+      //   boxShadow: "0px 5px 10px rgba(0, 46, 57, 0.15)",
+      //   padding: "10px",
+      //   borderRadius: "5px",
+      //   minWidth: "700px",
+      // }}
     >
       <input
         type="text"

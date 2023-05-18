@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import classes from "./UnitFlow.module.css";
 import { createEditor, Transforms, Editor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
@@ -13,7 +13,9 @@ import {
   DefaultElement,
   TextBox,
   RegenerateSearchBox,
+  StopGeneratingBox,
 } from "./Elements";
+import { JSONViewer } from "./../Utils/JsonViewer";
 import { findElementPath } from "../Plugins";
 import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
 import { initialValue } from "../Utils/DefaultBlocksUtil";
@@ -26,8 +28,9 @@ import {
 import Paragraph from "./Elements/Paragraph/Paragraph";
 
 function UnitFlow() {
-  const [editor] = useState(() => withEditableVoids(withReact(createEditor())));
+  const [editor] = useState(() => withReact(createEditor()));
   const [value, setValue] = useState(initialValue);
+  const abortController = useRef(null);
 
   const renderElement = useCallback((props) => {
     switch (props.element.type) {
@@ -67,11 +70,21 @@ function UnitFlow() {
         );
       case "searchBox":
         return <TextBox {...props} addNewSection={addNewSection} />;
-      case "loadingSearchBox":
-        return <div>Generating block...</div>;
+
       case "regenerateSearchBox":
         return (
-          <RegenerateSearchBox {...props} regenerateBlock={regenerateBlock} />
+          <RegenerateSearchBox
+            {...props}
+            regenerateBlock={regenerateBlock}
+            editor={editor}
+          />
+        );
+      case "stopGeneratingBox":
+        return (
+          <StopGeneratingBox
+            {...props}
+            stopGeneratingBlock={stopGeneratingBlock}
+          />
         );
       case "paragraph":
         return (
@@ -97,84 +110,76 @@ function UnitFlow() {
   }, []);
 
   const keyDownOps = (event) => {
-    if (!event.ctrlKey) return;
-    switch (event.key) {
-      case "Escape":
-        const { selection } = editor;
-        console.log(selection);
-        Transforms.removeNodes(editor);
-        break;
-      case "Enter":
-        console.log("Enter pressed");
-        break;
-      default:
-        return;
-    }
-  };
-
-  const fakeApiCall = (data) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        let newSection = getSectionFromInputText(data);
-        if (!newSection) reject("Invalid input");
-
-        resolve(newSection);
-      }, 1500); // resolves after 2 seconds
-    });
+    //TESTING
+    // if (!event.ctrlKey) return;
+    // switch (event.key) {
+    //   case "a":
+    //     const { selection } = editor;
+    //     console.log(selection);
+    //     //Transforms.removeNodes(editor);
+    //     break;
+    //   case "Enter":
+    //     console.log("Enter pressed");
+    //     break;
+    //   default:
+    //     return;
+    // }
   };
 
   const addNewSection = (inputText, element) => {
+    abortController.current = new AbortController();
+
     let elementPath = findElementPath(editor, element);
-    //Transforms.delete(editor, { at: elementPath });
+    Transforms.delete(editor, { at: elementPath });
     Transforms.insertNodes(
       editor,
-      { type: "loadingSearchBox", children: [{ text: "Generating block..." }] },
+      { type: "stopGeneratingBox", children: [{ text: "" }] },
       { at: elementPath }
     );
 
-    fakeApiCall(inputText)
-      .then((newSection) => {
-        console.log(newSection);
-        Transforms.delete(editor, { at: elementPath });
+    fetch("https://hub.dummyapis.com/delay?seconds=2", {
+      signal: abortController.current.signal,
+    })
+      .then((data) => {
+        let newSection = getSectionFromInputText(inputText);
+
+        if (!newSection) throw new Error("Invalid input");
+
         Transforms.delete(editor, { at: elementPath });
         Transforms.insertNodes(editor, newSection, {
           at: elementPath,
         });
-        const range = Editor.range(editor, elementPath);
+
+        const range = Editor.range(
+          editor,
+          elementPath,
+          incrementPath(elementPath, newSection.length - 1)
+        );
         Transforms.select(editor, range);
         Transforms.insertNodes(
           editor,
           { type: "regenerateSearchBox", children: [{ text: "" }] },
-          { at: incrementPath(elementPath) }
+          { at: incrementPath(elementPath, newSection.length) }
         );
       })
       .catch((error) => {
         console.log(error);
+        //what is the error behaviour??
         Transforms.delete(editor, { at: elementPath });
+      })
+      .finally(() => {
+        console.log("finally");
       });
-
-    // let elementPath = findElementPath(editor, element);
-    // const lastElement = elementPath[elementPath.length - 1];
-    // let newSectionPath = [...elementPath];
-    // newSectionPath[newSectionPath.length - 1] =
-    //   lastElement > 1 ? lastElement - 1 : 0;
-
-    // console.log(elementPath);
-    // console.log(newSectionPath);
-    // if (newSection) {
-    //   // const range = Editor.range(editor, elementPath);
-    //   Transforms.delete(editor, { at: elementPath });
-    //   Transforms.insertNodes(editor, newSection, { at: elementPath });
-    // }
   };
 
   const regenerateBlock = (inputText, element) => {
     let elementPath = findElementPath(editor, element);
     Transforms.delete(editor, { at: decrementPath(elementPath) });
-    console.log(inputText);
-    console.log(element);
     addNewSection(inputText, element);
   };
+
+  const stopGeneratingBlock = () =>
+    abortController.current && abortController.current.abort();
 
   const collapsedIconClicked = (event, element) => {
     event.preventDefault();
@@ -190,12 +195,18 @@ function UnitFlow() {
   };
 
   const select = () => {
-    const range = Editor.range(editor, [0, 0, 0]);
+    //const range = Editor.range(editor, [0, 0, 0]);
+    const range = {
+      anchor: { path: [0, 1, 0, 0, 0], offset: 18 },
+      focus: { path: [0, 1, 0, 0, 0], offset: 27 },
+    };
+
     Transforms.select(editor, range);
   };
 
   const show = () => {
     console.log(editor.selection);
+    console.log(Editor.unhangRange(editor, editor.selection));
   };
   console.log(value);
   return (
@@ -214,20 +225,21 @@ function UnitFlow() {
           />
         </Slate>
       </div>
+      {JSONViewer(value)}
     </div>
   );
 }
 
-const withEditableVoids = (editor) => {
-  const { isVoid } = editor;
+// const withEditableVoids = (editor) => {
+//   const { isVoid } = editor;
 
-  const VOID_TYPES = ["searchBox"];
-  editor.isVoid = (element) => {
-    return VOID_TYPES.includes(element.type) ? true : isVoid(element);
-  };
+//   const VOID_TYPES = ["searchBox"];
+//   editor.isVoid = (element) => {
+//     return VOID_TYPES.includes(element.type) ? true : isVoid(element);
+//   };
 
-  return editor;
-};
+//   return editor;
+// };
 
 const Leaf = (props) => {
   let { attributes, children, leaf } = props;

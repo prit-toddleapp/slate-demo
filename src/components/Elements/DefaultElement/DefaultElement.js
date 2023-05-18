@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import { newBlockMenuOptions } from "../../../Utils/DefaultBlocksUtil";
 import {
   addNewBlock,
+  addShifuSearchBox,
   findElementPath,
   updateNodeChildren,
 } from "../../../Plugins";
@@ -33,15 +34,18 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
     console.log(path, element);
     switch (e.target.textContent) {
       case "Ask Shifu":
-        updateNodeChildren(editor, path, [{ text: "" }], false);
-        Transforms.setNodes(
-          editor,
-          {
-            type: "searchBox",
-            children: [{ text: "" }],
-          },
-          { at: path }
-        );
+        //Op1
+        addShifuSearchBox(editor, element);
+        //Op2
+        // updateNodeChildren(editor, path, [{ text: "" }], false);
+        // Transforms.setNodes(
+        //   editor,
+        //   {
+        //     type: "searchBox",
+        //     children: [{ text: "" }],
+        //   },
+        //   { at: path }
+        // );
         break;
       case "Add new section":
         updateNodeChildren(

@@ -1,4 +1,5 @@
 import { Editor, Transforms } from "slate";
+import { incrementPath } from "../Utils/Misc";
 
 export const findElementPath = (editor, element) => {
   const [match] = Editor.nodes(editor, {
@@ -55,6 +56,19 @@ export const addNewBlock = (
   }
 ) => {
   const path = findElementPath(editor, element);
-  path[path.length - 1] = path[path.length - 1] + 1;
-  Transforms.insertNodes(editor, block, { at: path });
+  Transforms.insertNodes(editor, block, { at: incrementPath(path) });
+};
+
+export const addShifuSearchBox = (editor, element) => {
+  const newBlock = {
+    type: "searchBox",
+    children: [
+      {
+        text: "",
+      },
+    ],
+  };
+  const path = findElementPath(editor, element);
+  Transforms.delete(editor, { at: path });
+  Transforms.insertNodes(editor, newBlock, { at: path });
 };
