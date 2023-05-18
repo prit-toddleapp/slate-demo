@@ -15,6 +15,7 @@ import {
   RegenerateSearchBox,
   StopGeneratingBox,
 } from "./Elements";
+import { JSONViewer } from "./../Utils/JsonViewer";
 import { findElementPath } from "../Plugins";
 import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
 import { initialValue } from "../Utils/DefaultBlocksUtil";
@@ -71,7 +72,11 @@ function UnitFlow() {
 
       case "regenerateSearchBox":
         return (
-          <RegenerateSearchBox {...props} regenerateBlock={regenerateBlock} />
+          <RegenerateSearchBox
+            {...props}
+            regenerateBlock={regenerateBlock}
+            editor={editor}
+          />
         );
       case "stopGeneratingBox":
         return (
@@ -96,19 +101,20 @@ function UnitFlow() {
   }, []);
 
   const keyDownOps = (event) => {
-    if (!event.ctrlKey) return;
-    switch (event.key) {
-      case "Escape":
-        const { selection } = editor;
-        console.log(selection);
-        Transforms.removeNodes(editor);
-        break;
-      case "Enter":
-        console.log("Enter pressed");
-        break;
-      default:
-        return;
-    }
+    //TESTING
+    // if (!event.ctrlKey) return;
+    // switch (event.key) {
+    //   case "a":
+    //     const { selection } = editor;
+    //     console.log(selection);
+    //     //Transforms.removeNodes(editor);
+    //     break;
+    //   case "Enter":
+    //     console.log("Enter pressed");
+    //     break;
+    //   default:
+    //     return;
+    // }
   };
 
   const addNewSection = (inputText, element) => {
@@ -134,12 +140,17 @@ function UnitFlow() {
         Transforms.insertNodes(editor, newSection, {
           at: elementPath,
         });
-        const range = Editor.range(editor, elementPath);
+
+        const range = Editor.range(
+          editor,
+          elementPath,
+          incrementPath(elementPath, newSection.length - 1)
+        );
         Transforms.select(editor, range);
         Transforms.insertNodes(
           editor,
           { type: "regenerateSearchBox", children: [{ text: "" }] },
-          { at: incrementPath(elementPath) }
+          { at: incrementPath(elementPath, newSection.length) }
         );
       })
       .catch((error) => {
@@ -175,12 +186,18 @@ function UnitFlow() {
   };
 
   const select = () => {
-    const range = Editor.range(editor, [0, 0, 0]);
+    //const range = Editor.range(editor, [0, 0, 0]);
+    const range = {
+      anchor: { path: [0, 1, 0, 0, 0], offset: 18 },
+      focus: { path: [0, 1, 0, 0, 0], offset: 27 },
+    };
+
     Transforms.select(editor, range);
   };
 
   const show = () => {
     console.log(editor.selection);
+    console.log(Editor.unhangRange(editor, editor.selection));
   };
 
   return (
@@ -199,6 +216,7 @@ function UnitFlow() {
           />
         </Slate>
       </div>
+      {JSONViewer(value)}
     </div>
   );
 }
