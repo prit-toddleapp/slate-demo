@@ -5,11 +5,11 @@ import { deleteNode } from "../../../Plugins";
 
 const TextBox = (props) => {
   const { attributes, children, editor, element, addNewSection } = props;
-  const inputBoxRef = useRef(null);
+  const textBoxRef = useRef();
   const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
-    inputBoxRef.current?.focus?.();
+    textBoxRef.current?.focus?.();
   }, []);
 
   const onButtonClick = (event) => {
@@ -38,7 +38,7 @@ const TextBox = (props) => {
           setInputValue(e.target.value);
         }}
         onBlur={onSearchBoxBlur}
-        ref={inputBoxRef}
+        ref={textBoxRef}
       />
       <Button variant="contained" onMouseDown={onButtonClick}>
         Search

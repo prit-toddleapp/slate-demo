@@ -10,13 +10,14 @@ const AiBlock = ({ editor, element, attributes, children }) => {
 
   // console.log(selected, focused, readOnly);
   const entireNodeSelected = isEntireNodeSelected(editor, element);
+
   return (
     <div
       {...attributes}
       style={{
         marginBottom: "12px",
         paddingRight: "50px",
-        background: entireNodeSelected ? "rgba(35, 131, 226, 0.14)" : "white",
+        background: element.selected ? "rgba(35, 131, 226, 0.14)" : "white",
       }}
       className={classes.AiBlockContainer}
     >

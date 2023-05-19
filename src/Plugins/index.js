@@ -1,5 +1,5 @@
 import { Editor, Transforms, Range } from "slate";
-import { incrementPath } from "../Utils/Misc";
+import { incrementPath, selectableNodeTypes } from "../Utils/Misc";
 import _ from "lodash";
 
 export const findElementPath = (editor, element) => {
@@ -110,4 +110,30 @@ export const isEntireNodeSelected = (editor, element) => {
 export const deleteNode = (editor, element) => {
   const path = findElementPath(editor, element);
   Transforms.delete(editor, { at: path });
+};
+
+//following function will give me the nodes included in editor.selection
+export const getSelectedNodes = (editor) => {
+  const selectedNodes = Editor.nodes(editor, {});
+
+  for (const selectedNode of selectedNodes) {
+    const [node, path] = selectedNode;
+    if (_.includes(selectableNodeTypes, node.type)) {
+      Transforms.setNodes(editor, { selected: true }, { at: path });
+    }
+  }
+};
+
+export const removeSelectedProperty = (editor) => {
+  const selectedNodes = Editor.nodes(editor, {
+    at: [],
+    match: (n) => n.selected,
+  });
+
+  for (const selectedNode of selectedNodes) {
+    const [node, path] = selectedNode;
+    if (_.includes(selectableNodeTypes, node.type)) {
+      Transforms.setNodes(editor, { selected: false }, { at: path });
+    }
+  }
 };

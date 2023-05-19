@@ -5,7 +5,7 @@ import { findElementPath, deleteNode } from "../../../Plugins";
 
 const RegenerateSearchBox = (props) => {
   const { editor, attributes, children, element, regenerateBlock } = props;
-  const inputBoxRef = React.useRef(null);
+  const inputBoxRef = React.useRef();
   const [inputValue, setInputValue] = useState("");
 
   const regenerateButtonClicked = (event) => {
@@ -16,6 +16,7 @@ const RegenerateSearchBox = (props) => {
   };
 
   useEffect(() => {
+    //console.log("useeffect", inputBoxRef);
     inputBoxRef.current?.focus?.();
   }, []);
 
@@ -37,6 +38,11 @@ const RegenerateSearchBox = (props) => {
   const onSearchBoxBlur = (event) => {
     console.log("blur");
     deleteNode(editor, element);
+  };
+
+  const regenerateInputBoxClicked = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
   };
 
   return (
@@ -65,6 +71,7 @@ const RegenerateSearchBox = (props) => {
           setInputValue(e.target.value);
         }}
         onBlur={onSearchBoxBlur}
+        onClick={regenerateInputBoxClicked}
         ref={inputBoxRef}
       />
       <Button variant="contained" onMouseDown={regenerateButtonClicked}>

@@ -93,7 +93,7 @@ export const initialValue = [
               },
               {
                 type: "blockSubtext",
-                children: [{ text: "This is the subtext paragraph" }],
+                children: [{ text: "subtext" }],
               },
             ],
           },

@@ -79,3 +79,9 @@ export const decrementPath = (path, n = 1) => {
 
   return newPath;
 };
+
+export const selectableNodeTypes = [
+  "sectionHeader",
+  "aiBlock",
+  "resourceBlock",
+];

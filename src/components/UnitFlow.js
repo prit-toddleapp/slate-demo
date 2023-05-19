@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import classes from "./UnitFlow.module.css";
 import { createEditor, Transforms, Editor } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
@@ -16,7 +16,11 @@ import {
   StopGeneratingBox,
 } from "./Elements";
 import { JSONViewer } from "./../Utils/JsonViewer";
-import { findElementPath } from "../Plugins";
+import {
+  findElementPath,
+  getSelectedNodes,
+  removeSelectedProperty,
+} from "../Plugins";
 import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
 import { initialValue } from "../Utils/DefaultBlocksUtil";
 
@@ -129,9 +133,12 @@ function UnitFlow() {
   };
 
   const clickOps = (event) => {
-    if (event.shiftKey) {
-      if (event.button === 0) {
+    if (event.button === 0) {
+      if (event.shiftKey) {
         console.log(editor.selection);
+        getSelectedNodes(editor);
+      } else {
+        removeSelectedProperty(editor);
       }
     }
   };
@@ -166,6 +173,7 @@ function UnitFlow() {
           incrementPath(elementPath, newSection.length - 1)
         );
         Transforms.select(editor, range);
+        getSelectedNodes(editor);
         Transforms.insertNodes(
           editor,
           { type: "regenerateSearchBox", children: [{ text: "" }] },
@@ -212,17 +220,37 @@ function UnitFlow() {
   };
 
   const show = () => {
-    console.log(editor.selection);
-    console.log(Editor.unhangRange(editor, editor.selection));
+    const { selection } = editor;
+    const startOfEditor = Editor.range(editor, []);
+    console.log("first", Editor.first(editor, selection));
+    console.log("last", Editor.last(editor, selection));
+
+    console.log("edges", Editor.edges(editor, selection));
+    console.log("fragment", Editor.fragment(editor, selection));
   };
+
+  useEffect(() => {
+    console.log("main useffect");
+    //remove selection on UI
+    if (window.getSelection) {
+      if (window.getSelection().removeAllRanges) {
+        // Firefox Chrome
+        window.getSelection().removeAllRanges();
+      }
+    } else if (document.selection) {
+      // IE?
+      document.selection.empty();
+    }
+    console.log(editor.selection);
+  }, [value]);
 
   return (
     <div className={classes.untFlowBlock}>
       <h1>Unit Flow</h1>
       <div className={classes.slateContainer}>
         <Slate editor={editor} value={value} onChange={(v) => setValue(v)}>
-          {/* <button onClick={select}>select</button>
-          <button onClick={show}>give selection</button> */}
+          <button onClick={select}>select</button>
+          <button onClick={show}>give selection</button>
           <Editable
             renderElement={renderElement}
             renderLeaf={renderLeaf}
