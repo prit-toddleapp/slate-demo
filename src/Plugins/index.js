@@ -1,5 +1,6 @@
 import { Editor, Transforms } from "slate";
 import { incrementPath } from "../Utils/Misc";
+import { makeNodeId } from "./WithNodeId";
 
 export const findElementPath = (editor, element) => {
   const [match] = Editor.nodes(editor, {
@@ -47,6 +48,7 @@ export const addNewBlock = (
   editor,
   element,
   block = {
+    id: makeNodeId(),
     type: "newBlock",
     children: [
       {
@@ -61,6 +63,7 @@ export const addNewBlock = (
 
 export const addShifuSearchBox = (editor, element) => {
   const newBlock = {
+    id: makeNodeId(),
     type: "searchBox",
     children: [
       {
