@@ -188,8 +188,13 @@ function UnitFlow() {
   };
 
   const regenerateBlock = (inputText, element) => {
+    const range = Editor.range(editor, editor.selection);
+    Transforms.delete(editor, { at: range });
+
+    //dont know why but extra aiBlock element remains which needs to be deleted
     let elementPath = findElementPath(editor, element);
     Transforms.delete(editor, { at: decrementPath(elementPath) });
+
     addNewSection(inputText, element);
   };
 

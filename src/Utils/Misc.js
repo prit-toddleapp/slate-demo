@@ -43,6 +43,51 @@ const doubleNodeAiBlock = [
   },
 ];
 
+const tripleNodeAiBlock = [
+  {
+    type: "aiBlock",
+    children: [
+      {
+        type: "blockTitle",
+        children: [{ text: "New title added!!" }],
+      },
+      {
+        type: "blockSubtext",
+        num: "sub1",
+        children: [{ text: "New subtext added!!" }],
+      },
+    ],
+  },
+  {
+    type: "aiBlock",
+    children: [
+      {
+        type: "blockTitle",
+        children: [{ text: "Second title added!!" }],
+      },
+      {
+        type: "blockSubtext",
+        num: "sub2",
+        children: [{ text: "Second subtext added!!" }],
+      },
+    ],
+  },
+  {
+    type: "aiBlock",
+    children: [
+      {
+        type: "blockTitle",
+        children: [{ text: "Third title added!!" }],
+      },
+      {
+        type: "blockSubtext",
+        num: "sub3",
+        children: [{ text: "Third subtext added!!" }],
+      },
+    ],
+  },
+];
+
 const singleNodeLeBlock = [
   {
     type: "resourceBlock",
@@ -59,6 +104,8 @@ export const getSectionFromInputText = (inputText) => {
       return singleNodeLeBlock;
     case "ai2":
       return doubleNodeAiBlock;
+    case "ai3":
+      return tripleNodeAiBlock;
     default:
       return null;
   }
