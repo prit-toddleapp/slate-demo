@@ -36,6 +36,17 @@ import { createPortal } from "react-dom";
 import _ from "lodash";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
+const getElementById = (id, element) => {
+  if (element.id === id) return element;
+  if (element.children) {
+    for (let child of element.children) {
+      const result = getElementById(id, child);
+      if (result) return result;
+    }
+  }
+  return null;
+};
+
 const useEditor = () =>
   useMemo(() => withNodeId(withReact(createEditor())), []);
 
@@ -46,8 +57,9 @@ function UnitFlow() {
 
   //drag and drop
   const [activeId, setActiveId] = useState(null);
-  const activeElement = editor.children.find((x) => x.id === activeId);
-  console.log({ editor });
+  const activeElement = getElementById(activeId, editor);
+
+  console.log({ editor, activeElement });
   const handleDragStart = (event) => {
     if (event.active) {
       clearSelection();
@@ -57,28 +69,16 @@ function UnitFlow() {
   };
 
   const handleDragEnd = (event) => {
-    // const overId = event.over?.id;
-    // const overIndex = value.findIndex((x) => x.id === overId);
-    // console.log({ event, overId, overIndex, child: editor });
-    // console.log({ activeElement, editor });
-    // let elementPath = findElementPath(editor, activeElement);
-    // if (overId !== activeId && overIndex !== -1 && overId !== undefined) {
-    //   Transforms.moveNodes(editor, {
-    //     at: [],
-    //     match: (node) => node.id === activeId,
-    //     to: [overIndex],
-    //   });
-    // }
-
-    // setActiveId(null);
+    console.log(event);
     const overId = event.over?.id;
-    const overIndex = editor.children.findIndex((x) => x.id === overId);
-
-    if (overId !== activeId && overIndex !== -1) {
+    const overElement = getElementById(overId, editor);
+    const elementPath = findElementPath(editor, activeElement);
+    const overElementPath = findElementPath(editor, overElement);
+    console.log({ overElementPath, elementPath, overElement });
+    if (!_.isEqual(overElementPath, elementPath)) {
       Transforms.moveNodes(editor, {
-        at: [],
-        match: (node) => node.id === activeId,
-        to: [overIndex],
+        at: elementPath,
+        to: overElementPath,
       });
     }
 
