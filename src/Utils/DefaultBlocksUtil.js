@@ -129,11 +129,21 @@ export const initialValue = [
             children: [
               {
                 type: "blockTitle",
-                children: [{ text: "This is the title paragraph" }],
+                children: [
+                  {
+                    text: "This is the title paragraph",
+                    aiBlockType: "blockTitle",
+                  },
+                ],
               },
               {
                 type: "blockSubtext",
-                children: [{ text: "This is the subtext paragraph" }],
+                children: [
+                  {
+                    text: "This is the subtext paragraph",
+                    aiBlockType: "blockSubtext",
+                  },
+                ],
               },
             ],
           },

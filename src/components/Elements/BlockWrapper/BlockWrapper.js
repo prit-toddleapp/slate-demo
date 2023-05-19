@@ -57,6 +57,8 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
   };
 
   const handleClick = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
     setAnchorEl(event.currentTarget);
     setIsOpen(() => {
       return true;

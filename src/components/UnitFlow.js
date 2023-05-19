@@ -17,6 +17,8 @@ import {
 } from "./Elements";
 import { JSONViewer } from "./../Utils/JsonViewer";
 import {
+  atleastOneNodeSelected,
+  deleteSelectedNodes,
   findElementPath,
   getSelectedNodes,
   removeSelectedProperty,
@@ -135,7 +137,7 @@ function UnitFlow() {
   const clickOps = (event) => {
     if (event.button === 0) {
       if (event.shiftKey) {
-        console.log(editor.selection);
+        console.log(Editor.rangeRef.current);
         getSelectedNodes(editor);
       } else {
         removeSelectedProperty(editor);
@@ -188,12 +190,7 @@ function UnitFlow() {
   };
 
   const regenerateBlock = (inputText, element) => {
-    const range = Editor.range(editor, editor.selection);
-    Transforms.delete(editor, { at: range });
-
-    //dont know why but extra aiBlock element remains which needs to be deleted
-    let elementPath = findElementPath(editor, element);
-    Transforms.delete(editor, { at: decrementPath(elementPath) });
+    deleteSelectedNodes(editor, element);
 
     addNewSection(inputText, element);
   };
@@ -235,18 +232,23 @@ function UnitFlow() {
   };
 
   useEffect(() => {
-    console.log("main useffect");
     //remove selection on UI
-    if (window.getSelection) {
-      if (window.getSelection().removeAllRanges) {
-        // Firefox Chrome
-        window.getSelection().removeAllRanges();
+
+    if (atleastOneNodeSelected(editor)) {
+      if (window.getSelection) {
+        if (window.getSelection().removeAllRanges) {
+          // Firefox Chrome
+          window.getSelection().removeAllRanges();
+        }
+      } else if (document.selection) {
+        // IE?
+        document.selection.empty();
       }
-    } else if (document.selection) {
-      // IE?
-      document.selection.empty();
     }
-    console.log(editor.selection);
+
+    /*** atleastOneNodeSelected used to solve these ISSUES: ***/
+    //1. Blocks cannot be edited after one character
+    //2. Search input box focus not working
   }, [value]);
 
   return (

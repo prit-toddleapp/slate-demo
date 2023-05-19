@@ -1,5 +1,9 @@
 import { Editor, Transforms, Range } from "slate";
-import { incrementPath, selectableNodeTypes } from "../Utils/Misc";
+import {
+  incrementPath,
+  selectableNodeTypes,
+  decrementPath,
+} from "../Utils/Misc";
 import _ from "lodash";
 
 export const findElementPath = (editor, element) => {
@@ -122,6 +126,10 @@ export const getSelectedNodes = (editor) => {
       Transforms.setNodes(editor, { selected: true }, { at: path });
     }
   }
+
+  //When multiple shift+click events occur we need to know the previous editor selection
+  //so that it can be combined with the new selection
+  Editor.rangeRef.current = _.cloneDeep(editor.selection);
 };
 
 export const removeSelectedProperty = (editor) => {
@@ -136,4 +144,28 @@ export const removeSelectedProperty = (editor) => {
       Transforms.setNodes(editor, { selected: false }, { at: path });
     }
   }
+};
+
+export const deleteSelectedNodes = (editor, element) => {
+  if (!editor.selection) return;
+
+  const range = Editor.range(editor, editor.selection);
+  Transforms.delete(editor, { at: range });
+
+  //dont know why but extra aiBlock element remains which needs to be deleted
+  let elementPath = findElementPath(editor, element);
+  Transforms.delete(editor, { at: decrementPath(elementPath) });
+};
+
+export const atleastOneNodeSelected = (editor) => {
+  const selectedNodes = Editor.nodes(editor, {
+    at: [],
+    match: (n) => n.selected,
+  });
+
+  for (const selectedNode of selectedNodes) {
+    return true;
+  }
+
+  return false;
 };

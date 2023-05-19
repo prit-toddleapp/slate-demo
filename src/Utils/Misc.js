@@ -96,6 +96,59 @@ const singleNodeLeBlock = [
   },
 ];
 
+const singleSectionBlock = [
+  {
+    type: "section",
+    isCollapsed: false,
+    collapsedIcon: ">",
+    expandedIcon: "V",
+    children: [
+      {
+        type: "sectionHeader",
+        children: [
+          {
+            text: "New section title",
+          },
+        ],
+      },
+      {
+        type: "sectionBody",
+        //isCollapsed: false, is this appraoch better?
+        children: [
+          {
+            type: "aiBlock",
+            children: [
+              {
+                type: "blockTitle",
+                children: [
+                  {
+                    text: "ABC",
+                    aiBlockType: "blockTitle",
+                  },
+                ],
+              },
+              {
+                type: "blockSubtext",
+                children: [
+                  {
+                    text: "XYZ",
+                    aiBlockType: "blockSubtext",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "resourceBlock",
+            iconUrl: "LE",
+            children: [{ text: "Resource block" }],
+          },
+        ],
+      },
+    ],
+  },
+];
+
 export const getSectionFromInputText = (inputText) => {
   switch (inputText) {
     case "ai":
@@ -106,6 +159,8 @@ export const getSectionFromInputText = (inputText) => {
       return doubleNodeAiBlock;
     case "ai3":
       return tripleNodeAiBlock;
+    case "sec1":
+      return singleSectionBlock;
     default:
       return null;
   }
