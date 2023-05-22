@@ -28,7 +28,7 @@ import {
   deleteSelectedNodes,
   findElementPath,
   fullySelectedRange,
-  getSelectedNodes,
+  setSelectedNodes,
   removeSelectedProperty,
 } from "../Plugins";
 import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
@@ -36,7 +36,7 @@ import { initialValue } from "../Utils/DefaultBlocksUtil";
 import {
   getSectionFromInputText,
   incrementPath,
-  decrementPath,
+  selectableNodeTypes,
 } from "../Utils/Misc";
 import Paragraph from "./Elements/Paragraph/Paragraph";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
@@ -49,6 +49,7 @@ import { withNodeId } from "../Plugins/WithNodeId";
 import { createPortal } from "react-dom";
 import _ from "lodash";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { makeNodeId } from "../Plugins/WithNodeId";
 
 const getElementById = (id, element) => {
   if (element.id === id) return element;
@@ -73,13 +74,13 @@ function UnitFlow() {
   const [activeId, setActiveId] = useState(null);
   const activeElement = getElementById(activeId, editor);
 
-  console.log({ editor, activeElement });
+  //console.log({ editor, activeElement });
   const handleDragStart = (event) => {
     if (event.active) {
       clearSelection();
       setActiveId(event.active.id);
     }
-    console.log({ event });
+    //console.log({ event });
   };
 
   const handleDragEnd = (event) => {
@@ -221,8 +222,7 @@ function UnitFlow() {
   const clickOps = (event) => {
     if (event.button === 0) {
       if (event.shiftKey) {
-        console.log(Editor.rangeRef.current);
-        getSelectedNodes(editor);
+        setSelectedNodes(editor);
       } else {
         removeSelectedProperty(editor);
       }
@@ -236,7 +236,7 @@ function UnitFlow() {
     Transforms.delete(editor, { at: elementPath });
     Transforms.insertNodes(
       editor,
-      { type: "stopGeneratingBox", children: [{ text: "" }] },
+      { id: makeNodeId(), type: "stopGeneratingBox", children: [{ text: "" }] },
       { at: elementPath }
     );
 
@@ -247,9 +247,8 @@ function UnitFlow() {
         let newSection = getSectionFromInputText(inputText);
 
         if (!newSection) throw new Error("Invalid input");
-
         Transforms.delete(editor, { at: elementPath });
-        Transforms.insertNodes(editor, newSection, {
+        Transforms.insertNodes(editor, _.cloneDeep(newSection), {
           at: elementPath,
         });
 
@@ -258,11 +257,25 @@ function UnitFlow() {
           elementPath,
           incrementPath(elementPath, newSection.length - 1)
         );
+
         Transforms.select(editor, range);
-        getSelectedNodes(editor);
+        //setSelectedNodes(editor);
+        //TODO: below code is a replacement for the above commented code, make above func generic
+        const selectedNodes = Editor.nodes(editor, {});
+        for (const selectedNode of selectedNodes) {
+          const [node, path] = selectedNode;
+          if (_.includes(selectableNodeTypes, node.type)) {
+            Transforms.setNodes(editor, { selected: true }, { at: path });
+          }
+        }
+
         Transforms.insertNodes(
           editor,
-          { type: "regenerateSearchBox", children: [{ text: "" }] },
+          {
+            id: makeNodeId(),
+            type: "regenerateSearchBox",
+            children: [{ text: "" }],
+          },
           { at: incrementPath(elementPath, newSection.length) }
         );
       })
@@ -297,12 +310,16 @@ function UnitFlow() {
 
   const select = () => {
     //const range = Editor.range(editor, [0, 0, 0]);
-    const range = {
-      anchor: { path: [0, 1, 0, 0, 0], offset: 18 },
-      focus: { path: [0, 1, 0, 0, 0], offset: 27 },
-    };
+    // const range = {
+    //   anchor: { path: [0, 1, 0, 0, 0], offset: 18 },
+    //   focus: { path: [0, 1, 0, 0, 0], offset: 27 },
+    // };
 
-    Transforms.select(editor, range);
+    // const range = Editor.range(editor, [0, 1, 0], [1]);
+
+    // Transforms.select(editor, range);
+    // setSelectedNodes(editor);
+    console.log(editor.selection);
   };
 
   const show = () => {
@@ -334,7 +351,6 @@ function UnitFlow() {
     //1. Blocks cannot be edited after one character
     //2. Search input box focus not working
   }, [value]);
-  console.log(value);
 
   const items = useMemo(
     () => editor.children.map((element) => element.id),
@@ -346,8 +362,8 @@ function UnitFlow() {
       <h1>Unit Flow</h1>
       <div className={classes.slateContainer}>
         <Slate editor={editor} value={value} onChange={(v) => setValue(v)}>
-          {/* <button onClick={select}>select</button>
-          <button onClick={show}>give selection</button> */}
+          <button onClick={select}>select</button>
+          <button onClick={show}>give selection</button>
           <DndContext
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}

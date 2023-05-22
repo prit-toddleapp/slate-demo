@@ -7,6 +7,8 @@ import {
   getSelectedNodes,
   turnInElement,
   updateNodeChildren,
+  removeSelectedProperty,
+  isEntireNodeSelected,
 } from "../../../Plugins";
 import _ from "lodash";
 import classes from "./BlockWrapper.module.css";
@@ -17,6 +19,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import { getMenuOptions } from "../../../Utils/DefaultBlocksUtil";
+import { makeNodeId } from "../../../Plugins/WithNodeId";
 
 const BlockWrapper = ({ editor, element, child, attributes }) => {
   const [visibility, setVisibility] = useState("hidden");
@@ -59,9 +62,22 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
     setVisibility("hidden");
   };
 
+  const selectEntireNode = () => {
+    removeSelectedProperty(editor);
+    const path = findElementPath(editor, element);
+    const range = Editor.range(editor, path);
+
+    Transforms.setNodes(editor, { selected: true }, { at: path });
+    //"newBlock" node is causing error due to text:""; check this
+    Transforms.select(editor, range);
+  };
+
   const handleClick = (event) => {
     event.stopPropagation();
     event.preventDefault();
+
+    if (!isEntireNodeSelected(editor, element)) selectEntireNode();
+
     setAnchorEl(event.currentTarget);
     setIsOpen(() => {
       return true;

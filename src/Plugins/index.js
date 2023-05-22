@@ -10,7 +10,7 @@ import { makeNodeId } from "./WithNodeId";
 export const findElementPath = (editor, element) => {
   const [match] = Editor.nodes(editor, {
     at: [],
-    match: (n) => n === element,
+    match: (n) => n.id === element.id,
   });
   return match ? match[1] : null;
 };
@@ -123,6 +123,24 @@ export const deleteNode = (editor, element) => {
   Transforms.delete(editor, { at: path });
 };
 
+const intersectRanges = (range1, range2) => {
+  const { anchor: range1Anchor, focus: range1Focus } = range1;
+  const { anchor: range2Anchor, focus: range2Focus } = range2;
+
+  let newAnchor = Range.isBackward({
+    anchor: range1Anchor,
+    focus: range2Anchor,
+  })
+    ? range2Anchor
+    : range1Anchor;
+  let newFocus = Range.isForward({ anchor: range1Focus, focus: range2Focus })
+    ? range2Focus
+    : range1Focus;
+
+  return { anchor: newAnchor, focus: newFocus };
+};
+
+//get fully selected range from partially selected range
 export const fullySelectedRange = (editor, range = editor.selection) => {
   let [[startingLeaf, startingPath], [endingLeaf, endingPath]] = [
     Editor.first(editor, range),
@@ -159,6 +177,7 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
   return tmp;
 };
 
+//so that it can be combined with the new selection
 export const getSelectedNodeTypes = (editor) => {
   const nodeTypes = [];
 
@@ -199,24 +218,38 @@ export const getSelectedElements = (editor) => {
   return elements;
 };
 
-//following function will give me the nodes included in editor.selection
-export const getSelectedNodes = (editor) => {
+//following function will set selected in the nodes included in editor.selection
+export const setSelectedNodes = (editor) => {
+  //previous editor.selection => Editor.rangeRef.current
+  //When multiple shift+click events occur we need to know the previous editor selection
   Transforms.select(editor, fullySelectedRange(editor));
-  const selectedNodes = Editor.nodes(editor, {});
 
+  let oldSelection = Editor.rangeRef.current;
+  let fullEditorSelectionRange = fullySelectedRange(editor, editor.selection);
+  console.log(oldSelection);
+  if (oldSelection) {
+    let oldRange = fullySelectedRange(editor, oldSelection);
+    let combinedRange = intersectRanges(fullEditorSelectionRange, oldRange);
+
+    Editor.rangeRef.current = _.cloneDeep(combinedRange);
+    Transforms.select(editor, combinedRange);
+  } else {
+    Editor.rangeRef.current = _.cloneDeep(fullEditorSelectionRange);
+    Transforms.select(editor, fullEditorSelectionRange);
+  }
+
+  const selectedNodes = Editor.nodes(editor, {});
   for (const selectedNode of selectedNodes) {
     const [node, path] = selectedNode;
     if (_.includes(selectableNodeTypes, node.type)) {
       Transforms.setNodes(editor, { selected: true }, { at: path });
     }
   }
-
-  //When multiple shift+click events occur we need to know the previous editor selection
-  //so that it can be combined with the new selection
-  Editor.rangeRef.current = _.cloneDeep(editor.selection);
 };
 
 export const removeSelectedProperty = (editor) => {
+  Editor.rangeRef.current = null;
+
   const selectedNodes = Editor.nodes(editor, {
     at: [],
     match: (n) => n.selected,

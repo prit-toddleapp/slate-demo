@@ -1,16 +1,7 @@
 import React from "react";
 import classes from "./AiBlock.module.css";
-import { useSelected, useFocused, useReadOnly } from "slate-react";
-import { isEntireNodeSelected } from "../../../Plugins";
 
 const AiBlock = ({ editor, element, attributes, children }) => {
-  //const selected = useSelected();
-  // const focused = useFocused();
-  // const readOnly = useReadOnly();
-
-  // console.log(selected, focused, readOnly);
-  const entireNodeSelected = isEntireNodeSelected(editor, element);
-
   return (
     <div
       {...attributes}

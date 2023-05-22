@@ -85,7 +85,146 @@ export const initialValue = [
     type: "newBlock",
     children: [
       {
-        text: "",
+        id: makeNodeId(),
+        type: "sectionHeader",
+        children: [
+          {
+            text: "This is the header",
+          },
+        ],
+      },
+      {
+        id: makeNodeId(),
+        type: "sectionBody",
+        //isCollapsed: false, is this appraoch better?
+        children: [
+          {
+            id: makeNodeId(),
+            type: "aiBlock",
+            children: [
+              {
+                id: makeNodeId(),
+                type: "blockTitle",
+                children: [
+                  {
+                    text: "This is the title paragraph",
+                    parentType: "blockTitle",
+                  },
+                ],
+              },
+              {
+                id: makeNodeId(),
+                type: "blockSubtext",
+                children: [{ text: "subtext", parentType: "blockSubtext" }],
+              },
+            ],
+          },
+          {
+            id: makeNodeId(),
+            type: "aiBlock",
+            children: [
+              {
+                id: makeNodeId(),
+                type: "blockTitle",
+                children: [
+                  {
+                    text: "ASD This is the title paragraph",
+                    parentType: "blockTitle",
+                  },
+                ],
+              },
+              {
+                id: makeNodeId(),
+                type: "blockSubtext",
+                children: [{ text: "ASD subtext", parentType: "blockSubtext" }],
+              },
+            ],
+          },
+          {
+            id: makeNodeId(),
+            type: "aiBlock",
+            children: [
+              {
+                id: makeNodeId(),
+                type: "blockTitle",
+                children: [
+                  {
+                    text: "QWE This is the title paragraph",
+                    parentType: "blockTitle",
+                  },
+                ],
+              },
+              {
+                id: makeNodeId(),
+                type: "blockSubtext",
+                children: [{ text: "QWE subtext", parentType: "blockSubtext" }],
+              },
+            ],
+          },
+          {
+            id: makeNodeId(),
+            type: "resourceBlock",
+            iconUrl: "LE",
+            children: [{ text: "Resource block", parentType: "resourceBlock" }],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: makeNodeId(),
+    type: "section",
+    isCollapsed: true,
+    collapsedIcon: ">",
+    expandedIcon: "V",
+    children: [
+      {
+        id: makeNodeId(),
+        type: "sectionHeader",
+        children: [
+          {
+            text: "This is the header",
+          },
+        ],
+      },
+      {
+        id: makeNodeId(),
+        type: "sectionBody",
+        //isCollapsed: false, is this appraoch better?
+        children: [
+          {
+            id: makeNodeId(),
+            type: "aiBlock",
+            children: [
+              {
+                id: makeNodeId(),
+                type: "blockTitle",
+                children: [
+                  {
+                    text: "This is the title paragraph",
+                    parentType: "blockTitle",
+                  },
+                ],
+              },
+              {
+                id: makeNodeId(),
+                type: "blockSubtext",
+                children: [
+                  {
+                    text: "This is the subtext paragraph",
+                    parentType: "blockSubtext",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            id: makeNodeId(),
+            type: "resourceBlock",
+            iconUrl: "LE",
+            children: [{ text: "Resource block", parentType: "resourceBlock" }],
+          },
+        ],
       },
     ],
   },

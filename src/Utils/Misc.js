@@ -1,14 +1,19 @@
+import { makeNodeId } from "../Plugins/WithNodeId";
+
 const singleNodeAiBlock = [
   {
+    id: makeNodeId(),
     type: "aiBlock",
     children: [
       {
+        id: makeNodeId(),
         type: "blockTitle",
-        children: [{ text: "New title added!!" }],
+        children: [{ text: "New title added!!", parentType: "blockTitle" }],
       },
       {
+        id: makeNodeId(),
         type: "blockSubtext",
-        children: [{ text: "New subtext added!!" }],
+        children: [{ text: "New subtext added!!", parentType: "blockSubtext" }],
       },
     ],
   },
@@ -16,28 +21,36 @@ const singleNodeAiBlock = [
 
 const doubleNodeAiBlock = [
   {
+    id: makeNodeId(),
     type: "aiBlock",
     children: [
       {
+        id: makeNodeId(),
         type: "blockTitle",
-        children: [{ text: "New title added!!" }],
+        children: [{ text: "New title added!!", parentType: "blockTitle" }],
       },
       {
+        id: makeNodeId(),
         type: "blockSubtext",
-        children: [{ text: "New subtext added!!" }],
+        children: [{ text: "New subtext added!!", parentType: "blockSubtext" }],
       },
     ],
   },
   {
+    id: makeNodeId(),
     type: "aiBlock",
     children: [
       {
+        id: makeNodeId(),
         type: "blockTitle",
-        children: [{ text: "Second title added!!" }],
+        children: [{ text: "Second title added!!", parentType: "blockTitle" }],
       },
       {
+        id: makeNodeId(),
         type: "blockSubtext",
-        children: [{ text: "Second subtext added!!" }],
+        children: [
+          { text: "Second subtext added!!", parentType: "blockSubtext" },
+        ],
       },
     ],
   },
@@ -45,44 +58,57 @@ const doubleNodeAiBlock = [
 
 const tripleNodeAiBlock = [
   {
+    id: makeNodeId(),
     type: "aiBlock",
     children: [
       {
+        id: makeNodeId(),
         type: "blockTitle",
-        children: [{ text: "New title added!!" }],
+        children: [{ text: "New title added!!", parentType: "blockTitle" }],
       },
       {
+        id: makeNodeId(),
         type: "blockSubtext",
         num: "sub1",
-        children: [{ text: "New subtext added!!" }],
+        children: [{ text: "New subtext added!!", parentType: "blockSubtext" }],
       },
     ],
   },
   {
+    id: makeNodeId(),
     type: "aiBlock",
     children: [
       {
+        id: makeNodeId(),
         type: "blockTitle",
-        children: [{ text: "Second title added!!" }],
+        children: [{ text: "Second title added!!", parentType: "blockTitle" }],
       },
       {
+        id: makeNodeId(),
         type: "blockSubtext",
         num: "sub2",
-        children: [{ text: "Second subtext added!!" }],
+        children: [
+          { text: "Second subtext added!!", parentType: "blockSubtext" },
+        ],
       },
     ],
   },
   {
+    id: makeNodeId(),
     type: "aiBlock",
     children: [
       {
+        id: makeNodeId(),
         type: "blockTitle",
-        children: [{ text: "Third title added!!" }],
+        children: [{ text: "Third title added!!", parentType: "blockTitle" }],
       },
       {
+        id: makeNodeId(),
         type: "blockSubtext",
         num: "sub3",
-        children: [{ text: "Third subtext added!!" }],
+        children: [
+          { text: "Third subtext added!!", parentType: "blockSubtext" },
+        ],
       },
     ],
   },
@@ -90,6 +116,7 @@ const tripleNodeAiBlock = [
 
 const singleNodeLeBlock = [
   {
+    id: makeNodeId(),
     type: "resourceBlock",
     iconUrl: "LE",
     children: [{ text: "New LE added!!" }],
@@ -98,12 +125,14 @@ const singleNodeLeBlock = [
 
 const singleSectionBlock = [
   {
+    id: makeNodeId(),
     type: "section",
     isCollapsed: false,
     collapsedIcon: ">",
     expandedIcon: "V",
     children: [
       {
+        id: makeNodeId(),
         type: "sectionHeader",
         children: [
           {
@@ -112,33 +141,38 @@ const singleSectionBlock = [
         ],
       },
       {
+        id: makeNodeId(),
         type: "sectionBody",
         //isCollapsed: false, is this appraoch better?
         children: [
           {
+            id: makeNodeId(),
             type: "aiBlock",
             children: [
               {
+                id: makeNodeId(),
                 type: "blockTitle",
                 children: [
                   {
                     text: "ABC",
-                    aiBlockType: "blockTitle",
+                    parentType: "blockTitle",
                   },
                 ],
               },
               {
+                id: makeNodeId(),
                 type: "blockSubtext",
                 children: [
                   {
                     text: "XYZ",
-                    aiBlockType: "blockSubtext",
+                    parentType: "blockSubtext",
                   },
                 ],
               },
             ],
           },
           {
+            id: makeNodeId(),
             type: "resourceBlock",
             iconUrl: "LE",
             children: [{ text: "Resource block" }],
