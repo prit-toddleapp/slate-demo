@@ -116,8 +116,43 @@ export const deleteNode = (editor, element) => {
   Transforms.delete(editor, { at: path });
 };
 
+export const fullySelectedRange = (editor, range = editor.selection) => {
+  let [[startingLeaf, startingPath], [endingLeaf, endingPath]] = [
+    Editor.first(editor, range),
+    Editor.last(editor, range),
+  ];
+
+  let startingPath2 = [...startingPath],
+    endingPath2 = [...endingPath];
+
+  switch (startingLeaf.parentType) {
+    case "blockTitle":
+    case "blockSubtext":
+      startingPath2.splice(-2);
+      break;
+    default:
+      startingPath2.pop();
+      break;
+  }
+
+  switch (endingLeaf.parentType) {
+    case "blockTitle":
+    case "blockSubtext":
+      endingPath2.splice(-2);
+      break;
+    default:
+      endingPath2.pop();
+      break;
+  }
+
+  const tmp = Editor.range(editor, startingPath2, endingPath2);
+  console.log(tmp);
+  return tmp;
+};
+
 //following function will give me the nodes included in editor.selection
 export const getSelectedNodes = (editor) => {
+  Transforms.select(editor, fullySelectedRange(editor));
   const selectedNodes = Editor.nodes(editor, {});
 
   for (const selectedNode of selectedNodes) {
@@ -149,6 +184,7 @@ export const removeSelectedProperty = (editor) => {
 export const deleteSelectedNodes = (editor, element) => {
   if (!editor.selection) return;
 
+  console.log(editor.selection);
   const range = Editor.range(editor, editor.selection);
   Transforms.delete(editor, { at: range });
 

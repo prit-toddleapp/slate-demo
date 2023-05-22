@@ -89,18 +89,23 @@ export const initialValue = [
             children: [
               {
                 type: "blockTitle",
-                children: [{ text: "This is the title paragraph" }],
+                children: [
+                  {
+                    text: "This is the title paragraph",
+                    parentType: "blockTitle",
+                  },
+                ],
               },
               {
                 type: "blockSubtext",
-                children: [{ text: "subtext" }],
+                children: [{ text: "subtext", parentType: "blockSubtext" }],
               },
             ],
           },
           {
             type: "resourceBlock",
             iconUrl: "LE",
-            children: [{ text: "Resource block" }],
+            children: [{ text: "Resource block", parentType: "resourceBlock" }],
           },
         ],
       },
@@ -132,7 +137,7 @@ export const initialValue = [
                 children: [
                   {
                     text: "This is the title paragraph",
-                    aiBlockType: "blockTitle",
+                    parentType: "blockTitle",
                   },
                 ],
               },
@@ -141,7 +146,7 @@ export const initialValue = [
                 children: [
                   {
                     text: "This is the subtext paragraph",
-                    aiBlockType: "blockSubtext",
+                    parentType: "blockSubtext",
                   },
                 ],
               },
@@ -150,7 +155,7 @@ export const initialValue = [
           {
             type: "resourceBlock",
             iconUrl: "LE",
-            children: [{ text: "Resource block" }],
+            children: [{ text: "Resource block", parentType: "resourceBlock" }],
           },
         ],
       },

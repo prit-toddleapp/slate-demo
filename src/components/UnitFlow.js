@@ -20,6 +20,7 @@ import {
   atleastOneNodeSelected,
   deleteSelectedNodes,
   findElementPath,
+  fullySelectedRange,
   getSelectedNodes,
   removeSelectedProperty,
 } from "../Plugins";
