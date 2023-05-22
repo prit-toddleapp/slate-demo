@@ -10,7 +10,7 @@ import { makeNodeId } from "./WithNodeId";
 export const findElementPath = (editor, element) => {
   const [match] = Editor.nodes(editor, {
     at: [],
-    match: (n) => n === element,
+    match: (n) => n.id === element.id,
   });
   return match ? match[1] : null;
 };
@@ -119,6 +119,7 @@ export const deleteNode = (editor, element) => {
   Transforms.delete(editor, { at: path });
 };
 
+//get fully selected range from partially selected range
 export const fullySelectedRange = (editor, range = editor.selection) => {
   let [[startingLeaf, startingPath], [endingLeaf, endingPath]] = [
     Editor.first(editor, range),
