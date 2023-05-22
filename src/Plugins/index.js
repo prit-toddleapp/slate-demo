@@ -62,7 +62,7 @@ export const addNewBlock = (
     ],
   }
 ) => {
-  const path = findElementPath(editor, element);
+  const path = findElementPath(editor, _.last(element));
   Transforms.insertNodes(editor, block, { at: incrementPath(path) });
 };
 
@@ -131,7 +131,8 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
   switch (startingLeaf.parentType) {
     case "blockTitle":
     case "blockSubtext":
-      startingPath2.splice(-2);
+      startingPath2.pop();
+      startingPath2.pop();
       break;
     default:
       startingPath2.pop();
@@ -141,7 +142,8 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
   switch (endingLeaf.parentType) {
     case "blockTitle":
     case "blockSubtext":
-      endingPath2.splice(-2);
+      endingPath2.pop();
+      endingPath2.pop();
       break;
     default:
       endingPath2.pop();
@@ -151,6 +153,46 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
   const tmp = Editor.range(editor, startingPath2, endingPath2);
   console.log(tmp);
   return tmp;
+};
+
+export const getSelectedNodeTypes = (editor) => {
+  const nodeTypes = [];
+
+  const getNodesWithProperty = (node) => {
+    if (node.selected) {
+      nodeTypes.push(node.type);
+    }
+
+    if (node.children) {
+      for (const childNode of node.children) {
+        getNodesWithProperty(childNode);
+      }
+    }
+  };
+
+  getNodesWithProperty(editor);
+
+  return nodeTypes;
+};
+
+export const getSelectedElements = (editor) => {
+  const elements = [];
+
+  const getNodesWithProperty = (node) => {
+    if (node.selected) {
+      elements.push(node);
+    }
+
+    if (node.children) {
+      for (const childNode of node.children) {
+        getNodesWithProperty(childNode);
+      }
+    }
+  };
+
+  getNodesWithProperty(editor);
+
+  return elements;
 };
 
 //following function will give me the nodes included in editor.selection

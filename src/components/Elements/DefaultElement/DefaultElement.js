@@ -84,7 +84,7 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
         Transforms.select(editor, path);
         break;
       default:
-        addNewBlock(editor, element);
+        addNewBlock(editor, [element]);
         break;
     }
     handleClose();

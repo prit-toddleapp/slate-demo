@@ -1,3 +1,5 @@
+import _ from "lodash";
+import { getSelectedNodeTypes } from "../Plugins";
 import { makeNodeId } from "../Plugins/WithNodeId";
 
 export const DefaultBlock = {
@@ -199,8 +201,9 @@ export const menuOptions = {
     { key: "SHIFU", label: "Ask Shifu", id: "SHIFU" },
     { key: "DUPLICATE", label: "Duplicate", id: "DUPLICATE" },
     { key: "DELETE", label: "Delete", id: "DELETE" },
-    { key: "DELETE", label: "Delete Only Section", id: "DELETE" },
+    { key: "DELETE_SECTION", label: "Delete Only Section", id: "DELETE" },
   ],
+  sectionHeader: [{ key: "SHIFU", label: "Ask Shifu", id: "SHIFU" }],
   aiBlock: [
     { key: "SHIFU", label: "Ask Shifu", id: "SHIFU" },
     { key: "DUPLICATE", label: "Duplicate", id: "DUPLICATE" },
@@ -225,7 +228,15 @@ export const menuOptions = {
   newBlock: [{ key: "DELETE", label: "Delete", id: "DELETE" }],
 };
 
-export const getMenuOptions = (type) => {
-  if (menuOptions[type]) return menuOptions[type];
-  else return menuOptions.newBlock;
+export const getMenuOptions = (type, editor) => {
+  const selectedNodeTypes = getSelectedNodeTypes(editor);
+  if (_.isEmpty(selectedNodeTypes) && !menuOptions[type])
+    return menuOptions.newBlock;
+  selectedNodeTypes.push(type);
+  let options = menuOptions[type];
+  _.forEach(selectedNodeTypes, (nodeType) => {
+    if (menuOptions[nodeType])
+      options = _.intersectionBy(options, menuOptions[nodeType], "key");
+  });
+  return options;
 };
