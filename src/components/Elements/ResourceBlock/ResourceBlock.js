@@ -7,6 +7,9 @@ const ResourceBlock = (props) => {
     <div
       {...props.attributes}
       contentEditable={false}
+      style={{
+        background: element.selected ? "rgba(35, 131, 226, 0.14)" : "white",
+      }}
       className={classes.ResourceBlockContainer}
     >
       <div style={{ color: "blue" }}>{element.iconUrl}</div>

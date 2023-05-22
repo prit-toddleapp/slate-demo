@@ -43,11 +43,109 @@ const doubleNodeAiBlock = [
   },
 ];
 
+const tripleNodeAiBlock = [
+  {
+    type: "aiBlock",
+    children: [
+      {
+        type: "blockTitle",
+        children: [{ text: "New title added!!" }],
+      },
+      {
+        type: "blockSubtext",
+        num: "sub1",
+        children: [{ text: "New subtext added!!" }],
+      },
+    ],
+  },
+  {
+    type: "aiBlock",
+    children: [
+      {
+        type: "blockTitle",
+        children: [{ text: "Second title added!!" }],
+      },
+      {
+        type: "blockSubtext",
+        num: "sub2",
+        children: [{ text: "Second subtext added!!" }],
+      },
+    ],
+  },
+  {
+    type: "aiBlock",
+    children: [
+      {
+        type: "blockTitle",
+        children: [{ text: "Third title added!!" }],
+      },
+      {
+        type: "blockSubtext",
+        num: "sub3",
+        children: [{ text: "Third subtext added!!" }],
+      },
+    ],
+  },
+];
+
 const singleNodeLeBlock = [
   {
     type: "resourceBlock",
     iconUrl: "LE",
     children: [{ text: "New LE added!!" }],
+  },
+];
+
+const singleSectionBlock = [
+  {
+    type: "section",
+    isCollapsed: false,
+    collapsedIcon: ">",
+    expandedIcon: "V",
+    children: [
+      {
+        type: "sectionHeader",
+        children: [
+          {
+            text: "New section title",
+          },
+        ],
+      },
+      {
+        type: "sectionBody",
+        //isCollapsed: false, is this appraoch better?
+        children: [
+          {
+            type: "aiBlock",
+            children: [
+              {
+                type: "blockTitle",
+                children: [
+                  {
+                    text: "ABC",
+                    aiBlockType: "blockTitle",
+                  },
+                ],
+              },
+              {
+                type: "blockSubtext",
+                children: [
+                  {
+                    text: "XYZ",
+                    aiBlockType: "blockSubtext",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "resourceBlock",
+            iconUrl: "LE",
+            children: [{ text: "Resource block" }],
+          },
+        ],
+      },
+    ],
   },
 ];
 
@@ -59,6 +157,10 @@ export const getSectionFromInputText = (inputText) => {
       return singleNodeLeBlock;
     case "ai2":
       return doubleNodeAiBlock;
+    case "ai3":
+      return tripleNodeAiBlock;
+    case "sec1":
+      return singleSectionBlock;
     default:
       return null;
   }
@@ -76,6 +178,12 @@ export const decrementPath = (path, n = 1) => {
   if (newPath[newPath.length - 1] < 0) {
     newPath[newPath.length - 1] = 0;
   }
-  console.log(newPath);
+
   return newPath;
 };
+
+export const selectableNodeTypes = [
+  "sectionHeader",
+  "aiBlock",
+  "resourceBlock",
+];

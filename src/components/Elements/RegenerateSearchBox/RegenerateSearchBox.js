@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Transforms } from "slate";
 import { TextField, Button } from "@mui/material";
-import { findElementPath } from "../../../Plugins";
+import { findElementPath, deleteNode } from "../../../Plugins";
 
 const RegenerateSearchBox = (props) => {
   const { editor, attributes, children, element, regenerateBlock } = props;
@@ -9,32 +9,20 @@ const RegenerateSearchBox = (props) => {
   const [inputValue, setInputValue] = useState("");
 
   const regenerateButtonClicked = (event) => {
+    console.log("clicked");
     event.preventDefault();
+    event.stopPropagation();
     regenerateBlock(inputValue, element);
   };
 
   useEffect(() => {
+    //console.log("useeffect", inputBoxRef);
     inputBoxRef.current?.focus?.();
   }, []);
 
   const keyDownOps = (event) => {
-    //if (!event.ctrlKey) return;
     switch (event.key) {
       case "Escape":
-        //DO NOT DELETE NODES
-        // const { selection } = editor;
-        // console.log(selection);
-        // console.log(findElementPath(editor, element));
-        // Transforms.removeNodes(editor, {
-        //   at: [
-        //     [0, 1, 2],
-        //     [0, 1, 3],
-        //   ],
-        // });
-        // Transforms.removeNodes(editor, {
-        //   at: findElementPath(editor, element),
-        // });
-
         Transforms.deselect(editor);
         console.log(element);
         Transforms.removeNodes(editor, {
@@ -42,12 +30,19 @@ const RegenerateSearchBox = (props) => {
         });
 
         break;
-      case "Enter":
-        console.log("Enter pressed");
-        break;
       default:
         return;
     }
+  };
+
+  const onSearchBoxBlur = (event) => {
+    console.log("blur");
+    deleteNode(editor, element);
+  };
+
+  const regenerateInputBoxClicked = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
   };
 
   return (
@@ -75,9 +70,11 @@ const RegenerateSearchBox = (props) => {
         onChange={(e) => {
           setInputValue(e.target.value);
         }}
+        onBlur={onSearchBoxBlur}
+        onClick={regenerateInputBoxClicked}
         ref={inputBoxRef}
       />
-      <Button variant="contained" onClick={regenerateButtonClicked}>
+      <Button variant="contained" onMouseDown={regenerateButtonClicked}>
         Regenerate
       </Button>
     </div>

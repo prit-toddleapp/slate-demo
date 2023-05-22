@@ -1,17 +1,26 @@
-import React, { useState } from "react";
-import { TextField, Button } from "@mui/material";
-import ForwardIcon from "@mui/icons-material/Forward";
+import React, { useState, useRef, useEffect } from "react";
+import { Button } from "@mui/material";
 import classes from "./TextBox.module.css";
+import { deleteNode } from "../../../Plugins";
 
 const TextBox = (props) => {
-  const { attributes, children, element, collapsedIconClicked, addNewSection } =
-    props;
-
+  const { attributes, children, editor, element, addNewSection } = props;
+  const textBoxRef = useRef();
   const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    textBoxRef.current?.focus?.();
+  }, []);
 
   const onButtonClick = (event) => {
     event.preventDefault();
+    event.stopPropagation();
     addNewSection(inputValue, element);
+  };
+
+  const onSearchBoxBlur = (event) => {
+    console.log("blur");
+    deleteNode(editor, element);
   };
 
   return (
@@ -19,26 +28,19 @@ const TextBox = (props) => {
       {...attributes}
       contentEditable={false} //important; else UI will break if tried to edit
       className={classes.textBoxContainer}
-      // style={{
-      //   display: "flex",
-      //   justifyContent: "space-between",
-      //   marginBottom: "12px",
-      //   boxShadow: "0px 5px 10px rgba(0, 46, 57, 0.15)",
-      //   padding: "10px",
-      //   borderRadius: "5px",
-      //   minWidth: "700px",
-      // }}
     >
       <input
         type="text"
         placeholder="Enter text here"
         value={inputValue}
-        style={{ outline: "none", border: "0px" }}
+        style={{ outline: "none", border: "0px", width: "80%" }}
         onChange={(e) => {
           setInputValue(e.target.value);
         }}
+        onBlur={onSearchBoxBlur}
+        ref={textBoxRef}
       />
-      <Button variant="contained" onClick={onButtonClick}>
+      <Button variant="contained" onMouseDown={onButtonClick}>
         Search
       </Button>
     </div>

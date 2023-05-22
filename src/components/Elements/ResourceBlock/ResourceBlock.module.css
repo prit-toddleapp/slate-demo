@@ -1,13 +1,13 @@
-.ResourceBlockContainer{
-    display: flex;
-    margin-bottom: 12px;
-    column-gap: 10px;
-    font-weight: 500;
-    font-size : 16px;
-    cursor: pointer;
+.ResourceBlockContainer {
+  display: flex;
+  margin-bottom: 12px;
+  column-gap: 10px;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  padding-right: 30px;
 }
 
-.ResourceBlockContainer:hover .textCotainer{
-   text-decoration: underline;
+.ResourceBlockContainer:hover .textCotainer {
+  text-decoration: underline;
 }
-

@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useRef, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+} from "react";
 import classes from "./UnitFlow.module.css";
 import { createEditor, Transforms, Editor } from "slate";
 import { Slate, Editable, withReact, ReactEditor } from "slate-react";
@@ -16,7 +22,14 @@ import {
   StopGeneratingBox,
 } from "./Elements";
 import { JSONViewer } from "./../Utils/JsonViewer";
-import { findElementPath } from "../Plugins";
+import {
+  atleastOneNodeSelected,
+  deleteSelectedNodes,
+  findElementPath,
+  fullySelectedRange,
+  getSelectedNodes,
+  removeSelectedProperty,
+} from "../Plugins";
 import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
 import { initialValue } from "../Utils/DefaultBlocksUtil";
 import {
@@ -145,7 +158,9 @@ function UnitFlow() {
           />
         );
       case "searchBox":
-        return <TextBox {...props} addNewSection={addNewSection} />;
+        return (
+          <TextBox {...props} editor={editor} addNewSection={addNewSection} />
+        );
 
       case "regenerateSearchBox":
         return (
@@ -202,6 +217,17 @@ function UnitFlow() {
     // }
   };
 
+  const clickOps = (event) => {
+    if (event.button === 0) {
+      if (event.shiftKey) {
+        console.log(Editor.rangeRef.current);
+        getSelectedNodes(editor);
+      } else {
+        removeSelectedProperty(editor);
+      }
+    }
+  };
+
   const addNewSection = (inputText, element) => {
     abortController.current = new AbortController();
 
@@ -232,6 +258,7 @@ function UnitFlow() {
           incrementPath(elementPath, newSection.length - 1)
         );
         Transforms.select(editor, range);
+        getSelectedNodes(editor);
         Transforms.insertNodes(
           editor,
           { type: "regenerateSearchBox", children: [{ text: "" }] },
@@ -242,15 +269,12 @@ function UnitFlow() {
         console.log(error);
         //what is the error behaviour??
         Transforms.delete(editor, { at: elementPath });
-      })
-      .finally(() => {
-        console.log("finally");
       });
   };
 
   const regenerateBlock = (inputText, element) => {
-    let elementPath = findElementPath(editor, element);
-    Transforms.delete(editor, { at: decrementPath(elementPath) });
+    deleteSelectedNodes(editor, element);
+
     addNewSection(inputText, element);
   };
 
@@ -281,9 +305,34 @@ function UnitFlow() {
   };
 
   const show = () => {
-    console.log(editor.selection);
-    console.log(Editor.unhangRange(editor, editor.selection));
+    const { selection } = editor;
+    const startOfEditor = Editor.range(editor, []);
+    console.log("first", Editor.first(editor, selection));
+    console.log("last", Editor.last(editor, selection));
+
+    console.log("edges", Editor.edges(editor, selection));
+    console.log("fragment", Editor.fragment(editor, selection));
   };
+
+  useEffect(() => {
+    //remove selection on UI
+
+    if (atleastOneNodeSelected(editor)) {
+      if (window.getSelection) {
+        if (window.getSelection().removeAllRanges) {
+          // Firefox Chrome
+          window.getSelection().removeAllRanges();
+        }
+      } else if (document.selection) {
+        // IE?
+        document.selection.empty();
+      }
+    }
+
+    /*** atleastOneNodeSelected used to solve these ISSUES: ***/
+    //1. Blocks cannot be edited after one character
+    //2. Search input box focus not working
+  }, [value]);
   console.log(value);
 
   const items = useMemo(
@@ -312,6 +361,9 @@ function UnitFlow() {
                 renderLeaf={renderLeaf}
                 onKeyDown={(event) => {
                   keyDownOps(event);
+                }}
+                onClick={(event) => {
+                  clickOps(event);
                 }}
               />
             </SortableContext>

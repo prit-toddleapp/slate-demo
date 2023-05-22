@@ -106,12 +106,17 @@ export const initialValue = [
               {
                 id: makeNodeId(),
                 type: "blockTitle",
-                children: [{ text: "This is the title paragraph" }],
+                children: [
+                  {
+                    text: "This is the title paragraph",
+                    parentType: "blockTitle",
+                  },
+                ],
               },
               {
                 id: makeNodeId(),
                 type: "blockSubtext",
-                children: [{ text: "This is the subtext paragraph" }],
+                children: [{ text: "subtext", parentType: "blockSubtext" }],
               },
             ],
           },
@@ -119,7 +124,7 @@ export const initialValue = [
             id: makeNodeId(),
             type: "resourceBlock",
             iconUrl: "LE",
-            children: [{ text: "Resource block" }],
+            children: [{ text: "Resource block", parentType: "resourceBlock" }],
           },
         ],
       },
@@ -153,12 +158,22 @@ export const initialValue = [
               {
                 id: makeNodeId(),
                 type: "blockTitle",
-                children: [{ text: "This is the title paragraph" }],
+                children: [
+                  {
+                    text: "This is the title paragraph",
+                    parentType: "blockTitle",
+                  },
+                ],
               },
               {
                 id: makeNodeId(),
                 type: "blockSubtext",
-                children: [{ text: "This is the subtext paragraph" }],
+                children: [
+                  {
+                    text: "This is the subtext paragraph",
+                    parentType: "blockSubtext",
+                  },
+                ],
               },
             ],
           },
@@ -166,7 +181,7 @@ export const initialValue = [
             id: makeNodeId(),
             type: "resourceBlock",
             iconUrl: "LE",
-            children: [{ text: "Resource block" }],
+            children: [{ text: "Resource block", parentType: "resourceBlock" }],
           },
         ],
       },
