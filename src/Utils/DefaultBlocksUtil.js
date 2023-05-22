@@ -1,5 +1,8 @@
+import { makeNodeId } from "../Plugins/WithNodeId";
+
 export const DefaultBlock = {
   section: {
+    id: makeNodeId(),
     type: "section",
     isCollapsed: false,
     children: [
@@ -14,6 +17,7 @@ export const DefaultBlock = {
     ],
   },
   sectionHeader: {
+    id: makeNodeId(),
     type: "sectionHeader",
     children: [
       {
@@ -22,6 +26,7 @@ export const DefaultBlock = {
     ],
   },
   sectionBody: {
+    id: makeNodeId(),
     type: "sectionBody",
     children: [
       {
@@ -30,32 +35,39 @@ export const DefaultBlock = {
     ],
   },
   aiBlock: {
+    id: makeNodeId(),
     type: "aiBlock",
     children: [
       {
+        id: makeNodeId(),
         type: "blockTitle",
         children: [{ text: "" }],
       },
       {
+        id: makeNodeId(),
         type: "blockSubtext",
         children: [{ text: "" }],
       },
     ],
   },
   resourceBlock: {
+    id: makeNodeId(),
     type: "resourceBlock",
     iconUrl: "",
     children: [{ text: "" }],
   },
   blockTitle: {
+    id: makeNodeId(),
     type: "blockTitle",
     children: [{ text: "" }],
   },
   blockSubtext: {
+    id: makeNodeId(),
     type: "blockSubtext",
     children: [{ text: "" }],
   },
   paragraph: {
+    id: makeNodeId(),
     type: "paragraph",
     children: [
       {
@@ -67,12 +79,14 @@ export const DefaultBlock = {
 
 export const initialValue = [
   {
+    id: makeNodeId(),
     type: "section",
     isCollapsed: false,
     collapsedIcon: ">",
     expandedIcon: "V",
     children: [
       {
+        id: makeNodeId(),
         type: "sectionHeader",
         children: [
           {
@@ -81,13 +95,16 @@ export const initialValue = [
         ],
       },
       {
+        id: makeNodeId(),
         type: "sectionBody",
         //isCollapsed: false, is this appraoch better?
         children: [
           {
+            id: makeNodeId(),
             type: "aiBlock",
             children: [
               {
+                id: makeNodeId(),
                 type: "blockTitle",
                 children: [
                   {
@@ -97,12 +114,14 @@ export const initialValue = [
                 ],
               },
               {
+                id: makeNodeId(),
                 type: "blockSubtext",
                 children: [{ text: "subtext", parentType: "blockSubtext" }],
               },
             ],
           },
           {
+            id: makeNodeId(),
             type: "resourceBlock",
             iconUrl: "LE",
             children: [{ text: "Resource block", parentType: "resourceBlock" }],
@@ -112,12 +131,14 @@ export const initialValue = [
     ],
   },
   {
+    id: makeNodeId(),
     type: "section",
     isCollapsed: true,
     collapsedIcon: ">",
     expandedIcon: "V",
     children: [
       {
+        id: makeNodeId(),
         type: "sectionHeader",
         children: [
           {
@@ -126,13 +147,16 @@ export const initialValue = [
         ],
       },
       {
+        id: makeNodeId(),
         type: "sectionBody",
         //isCollapsed: false, is this appraoch better?
         children: [
           {
+            id: makeNodeId(),
             type: "aiBlock",
             children: [
               {
+                id: makeNodeId(),
                 type: "blockTitle",
                 children: [
                   {
@@ -142,6 +166,7 @@ export const initialValue = [
                 ],
               },
               {
+                id: makeNodeId(),
                 type: "blockSubtext",
                 children: [
                   {
@@ -153,6 +178,7 @@ export const initialValue = [
             ],
           },
           {
+            id: makeNodeId(),
             type: "resourceBlock",
             iconUrl: "LE",
             children: [{ text: "Resource block", parentType: "resourceBlock" }],
