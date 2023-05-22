@@ -1,7 +1,13 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+} from "react";
 import classes from "./UnitFlow.module.css";
 import { createEditor, Transforms, Editor } from "slate";
-import { Slate, Editable, withReact } from "slate-react";
+import { Slate, Editable, withReact, ReactEditor } from "slate-react";
 import {
   AiBlock,
   BlockSubtext,
@@ -26,20 +32,96 @@ import {
 } from "../Plugins";
 import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
 import { initialValue } from "../Utils/DefaultBlocksUtil";
-
 import {
   getSectionFromInputText,
   incrementPath,
   decrementPath,
 } from "../Utils/Misc";
 import Paragraph from "./Elements/Paragraph/Paragraph";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { withNodeId } from "../Plugins/WithNodeId";
+import { createPortal } from "react-dom";
+import _ from "lodash";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+
+const getElementById = (id, element) => {
+  if (element.id === id) return element;
+  if (element.children) {
+    for (let child of element.children) {
+      const result = getElementById(id, child);
+      if (result) return result;
+    }
+  }
+  return null;
+};
+
+const useEditor = () =>
+  useMemo(() => withNodeId(withReact(createEditor())), []);
 
 function UnitFlow() {
-  const [editor] = useState(() => withReact(createEditor()));
+  const editor = useEditor();
   const [value, setValue] = useState(initialValue);
   const abortController = useRef(null);
 
+  //drag and drop
+  const [activeId, setActiveId] = useState(null);
+  const activeElement = getElementById(activeId, editor);
+
+  console.log({ editor, activeElement });
+  const handleDragStart = (event) => {
+    if (event.active) {
+      clearSelection();
+      setActiveId(event.active.id);
+    }
+    console.log({ event });
+  };
+
+  const handleDragEnd = (event) => {
+    console.log(event);
+    const overId = event.over?.id;
+    const overElement = getElementById(overId, editor);
+    const elementPath = findElementPath(editor, activeElement);
+    const overElementPath = findElementPath(editor, overElement);
+    console.log({ overElementPath, elementPath, overElement });
+    if (!_.isEqual(overElementPath, elementPath)) {
+      Transforms.moveNodes(editor, {
+        at: elementPath,
+        to: overElementPath,
+      });
+    }
+
+    setActiveId(null);
+  };
+
+  const handleDragCancel = () => {
+    setActiveId(null);
+  };
+
+  const clearSelection = () => {
+    ReactEditor.blur(editor);
+    Transforms.deselect(editor);
+    window.getSelection()?.empty();
+  };
+
   const renderElement = useCallback((props) => {
+    const isDraggableBlock = _.includes(
+      ["section", "resourceBlock", "paragraph", "newBlock", "aiBlock"],
+      props.element.type
+    );
+
+    return isDraggableBlock ? (
+      <SortableElement {...props} renderElement={renderElementContent} />
+    ) : (
+      renderElementContent(props)
+    );
+  }, []);
+
+  const renderElementContent = useCallback((props) => {
     switch (props.element.type) {
       case "section":
         return (
@@ -251,24 +333,49 @@ function UnitFlow() {
     //1. Blocks cannot be edited after one character
     //2. Search input box focus not working
   }, [value]);
+  console.log(value);
+
+  const items = useMemo(
+    () => editor.children.map((element) => element.id),
+    [editor.children]
+  );
 
   return (
     <div className={classes.untFlowBlock}>
       <h1>Unit Flow</h1>
       <div className={classes.slateContainer}>
         <Slate editor={editor} value={value} onChange={(v) => setValue(v)}>
-          <button onClick={select}>select</button>
-          <button onClick={show}>give selection</button>
-          <Editable
-            renderElement={renderElement}
-            renderLeaf={renderLeaf}
-            onKeyDown={(event) => {
-              keyDownOps(event);
-            }}
-            onClick={(event) => {
-              clickOps(event);
-            }}
-          />
+          {/* <button onClick={select}>select</button>
+          <button onClick={show}>give selection</button> */}
+          <DndContext
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onDragCancel={handleDragCancel}
+          >
+            <SortableContext
+              items={items}
+              strategy={verticalListSortingStrategy}
+            >
+              <Editable
+                renderElement={renderElement}
+                renderLeaf={renderLeaf}
+                onKeyDown={(event) => {
+                  keyDownOps(event);
+                }}
+                onClick={(event) => {
+                  clickOps(event);
+                }}
+              />
+            </SortableContext>
+            {createPortal(
+              <DragOverlay adjustScale={false}>
+                {activeElement && (
+                  <DragOverlayContent element={activeElement} editor={editor} />
+                )}
+              </DragOverlay>,
+              document.body
+            )}
+          </DndContext>
         </Slate>
       </div>
       {JSONViewer(value)}
@@ -295,3 +402,124 @@ const Leaf = (props) => {
 //components
 
 export default UnitFlow;
+
+const DragOverlayContent = ({ element }) => {
+  const editor = useEditor();
+  const [value] = useState([JSON.parse(JSON.stringify(element))]); // clone
+  const renderElement = useCallback((props) => {
+    switch (props.element.type) {
+      case "section":
+        return (
+          <BlockWrapper
+            child={<Section {...props} />}
+            editor={editor}
+            isDragged={true}
+            {...props}
+          />
+        );
+      case "sectionHeader":
+        return <SectionHeader {...props} />;
+      case "sectionBody":
+        return <SectionBody {...props} />;
+      case "aiBlock":
+        return (
+          <BlockWrapper
+            child={<AiBlock {...props} editor={editor} />}
+            editor={editor}
+            isDragged={true}
+            {...props}
+          />
+        );
+      case "blockTitle":
+        return <BlockTitle {...props} />;
+      case "blockSubtext":
+        return <BlockSubtext {...props} />;
+      case "resourceBlock":
+        return (
+          <BlockWrapper
+            isDragged={true}
+            child={<ResourceBlock {...props} />}
+            editor={editor}
+            {...props}
+          />
+        );
+      case "searchBox":
+        return <TextBox {...props} />;
+
+      case "regenerateSearchBox":
+        return <RegenerateSearchBox {...props} editor={editor} />;
+      case "stopGeneratingBox":
+        return <StopGeneratingBox {...props} />;
+      case "paragraph":
+        return (
+          <BlockWrapper
+            isDragged={true}
+            child={<Paragraph {...props} editor={editor} />}
+            editor={editor}
+            {...props}
+          />
+        );
+      default:
+        return (
+          <BlockWrapper
+            isDragged={true}
+            child={<DefaultElement {...props} editor={editor} />}
+            editor={editor}
+            {...props}
+          />
+        );
+    }
+  }, []);
+  return (
+    <div className={classes.container}>
+      <div className={classes.dragIcon}>
+        <DragIndicatorIcon fontSize="small" />
+      </div>
+      <Slate editor={editor} value={value}>
+        <Editable readOnly={true} renderElement={renderElement} />
+      </Slate>
+    </div>
+  );
+};
+
+const SortableElement = (props) => {
+  const { attributes, element, children, renderElement } = props;
+  const sortable = useSortable({ id: element.id });
+
+  return (
+    <div {...attributes}>
+      <Sortable sortable={sortable}>
+        <div className={classes.container}>
+          <div
+            contentEditable={false}
+            {...sortable.listeners}
+            className={classes.dragIcon}
+          >
+            <DragIndicatorIcon fontSize="small" />
+          </div>
+          <div>{renderElement(props)}</div>
+        </div>
+      </Sortable>
+    </div>
+  );
+};
+
+const Sortable = ({ sortable, children }) => {
+  return (
+    <div
+      className="sortable"
+      {...sortable.attributes}
+      ref={sortable.setNodeRef}
+      style={{
+        transition: sortable.transition,
+        "--translate-y": toPx(sortable.transform?.y),
+        pointerEvents: sortable.isSorting ? "none" : undefined,
+        opacity: sortable.isDragging ? 0 : 1,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const toPx = (value) => (value ? `${Math.round(value)}px` : undefined);

@@ -32,3 +32,17 @@
 .slateContainer{
     width: 800px;
 }
+
+.container {
+    display: flex;
+    column-gap: 5px;
+}
+
+.dragIcon {
+    cursor: grab;
+    visibility: hidden;
+}
+
+.container:hover .dragIcon {
+    visibility: visible;
+}
