@@ -62,8 +62,12 @@ export const addNewBlock = (
     ],
   }
 ) => {
-  const path = findElementPath(editor, _.last(element));
-  Transforms.insertNodes(editor, block, { at: incrementPath(path) });
+  const path = _.last(element)
+    ? findElementPath(editor, _.last(element))
+    : null;
+  Transforms.insertNodes(editor, block, {
+    at: path ? incrementPath(path) : [0],
+  });
 };
 
 export const addShifuSearchBox = (editor, element) => {

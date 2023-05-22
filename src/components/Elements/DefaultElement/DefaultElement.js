@@ -105,7 +105,11 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
   };
 
   return (
-    <div {...attributes} className={classes.defaultBlockContainer}>
+    <div
+      {...attributes}
+      className={classes.defaultBlockContainer}
+      contentEditable={false}
+    >
       <div>
         <IconButton
           aria-label="more"

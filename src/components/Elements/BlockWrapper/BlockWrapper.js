@@ -96,6 +96,9 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
         _.forEach(selectedElements, (element) => {
           const path = findElementPath(editor, element);
           Transforms.removeNodes(editor, { at: path });
+          if (editor.children.length == 0) {
+            addNewBlock(editor);
+          }
         });
         break;
       case "Delete Only Section":
