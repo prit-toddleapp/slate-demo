@@ -361,8 +361,8 @@ function UnitFlow() {
       <h1>Unit Flow</h1>
       <div className={classes.slateContainer}>
         <Slate editor={editor} value={value} onChange={(v) => setValue(v)}>
-          <button onClick={select}>select</button>
-          <button onClick={show}>give selection</button>
+          {/* <button onClick={select}>select</button>
+          <button onClick={show}>give selection</button> */}
           <DndContext
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
@@ -394,7 +394,7 @@ function UnitFlow() {
           </DndContext>
         </Slate>
       </div>
-      {JSONViewer(value)}
+      {/* {JSONViewer(value)} */}
     </div>
   );
 }
