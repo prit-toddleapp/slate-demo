@@ -177,13 +177,7 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
   return tmp;
 };
 
-<<<<<<< HEAD
-//following function will set selected in the nodes included in editor.selection
-export const setSelectedNodes = (editor) => {
-  //previous editor.selection => Editor.rangeRef.current
-  //When multiple shift+click events occur we need to know the previous editor selection
-  //so that it can be combined with the new selection
-=======
+//so that it can be combined with the new selection
 export const getSelectedNodeTypes = (editor) => {
   const nodeTypes = [];
 
@@ -224,11 +218,11 @@ export const getSelectedElements = (editor) => {
   return elements;
 };
 
-//following function will give me the nodes included in editor.selection
-export const getSelectedNodes = (editor) => {
+//following function will set selected in the nodes included in editor.selection
+export const setSelectedNodes = (editor) => {
+  //previous editor.selection => Editor.rangeRef.current
+  //When multiple shift+click events occur we need to know the previous editor selection
   Transforms.select(editor, fullySelectedRange(editor));
-  const selectedNodes = Editor.nodes(editor, {});
->>>>>>> main
 
   let oldSelection = Editor.rangeRef.current;
   let fullEditorSelectionRange = fullySelectedRange(editor, editor.selection);
