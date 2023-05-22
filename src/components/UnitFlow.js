@@ -35,7 +35,7 @@ import { initialValue } from "../Utils/DefaultBlocksUtil";
 import {
   getSectionFromInputText,
   incrementPath,
-  decrementPath,
+  selectableNodeTypes,
 } from "../Utils/Misc";
 import Paragraph from "./Elements/Paragraph/Paragraph";
 import { DndContext, DragOverlay } from "@dnd-kit/core";
@@ -48,6 +48,7 @@ import { withNodeId } from "../Plugins/WithNodeId";
 import { createPortal } from "react-dom";
 import _ from "lodash";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { makeNodeId } from "../Plugins/WithNodeId";
 
 const getElementById = (id, element) => {
   if (element.id === id) return element;
@@ -234,7 +235,7 @@ function UnitFlow() {
     Transforms.delete(editor, { at: elementPath });
     Transforms.insertNodes(
       editor,
-      { type: "stopGeneratingBox", children: [{ text: "" }] },
+      { id: makeNodeId(), type: "stopGeneratingBox", children: [{ text: "" }] },
       { at: elementPath }
     );
 
@@ -245,9 +246,8 @@ function UnitFlow() {
         let newSection = getSectionFromInputText(inputText);
 
         if (!newSection) throw new Error("Invalid input");
-
         Transforms.delete(editor, { at: elementPath });
-        Transforms.insertNodes(editor, newSection, {
+        Transforms.insertNodes(editor, _.cloneDeep(newSection), {
           at: elementPath,
         });
 
@@ -256,11 +256,25 @@ function UnitFlow() {
           elementPath,
           incrementPath(elementPath, newSection.length - 1)
         );
+
         Transforms.select(editor, range);
-        setSelectedNodes(editor);
+        //setSelectedNodes(editor);
+        //TODO: below code is a replacement for the above commented code, make above func generic
+        const selectedNodes = Editor.nodes(editor, {});
+        for (const selectedNode of selectedNodes) {
+          const [node, path] = selectedNode;
+          if (_.includes(selectableNodeTypes, node.type)) {
+            Transforms.setNodes(editor, { selected: true }, { at: path });
+          }
+        }
+
         Transforms.insertNodes(
           editor,
-          { type: "regenerateSearchBox", children: [{ text: "" }] },
+          {
+            id: makeNodeId(),
+            type: "regenerateSearchBox",
+            children: [{ text: "" }],
+          },
           { at: incrementPath(elementPath, newSection.length) }
         );
       })
