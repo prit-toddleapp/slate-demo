@@ -72,13 +72,13 @@ function UnitFlow() {
   const [activeId, setActiveId] = useState(null);
   const activeElement = getElementById(activeId, editor);
 
-  console.log({ editor, activeElement });
+  //console.log({ editor, activeElement });
   const handleDragStart = (event) => {
     if (event.active) {
       clearSelection();
       setActiveId(event.active.id);
     }
-    console.log({ event });
+    //console.log({ event });
   };
 
   const handleDragEnd = (event) => {
@@ -220,7 +220,6 @@ function UnitFlow() {
   const clickOps = (event) => {
     if (event.button === 0) {
       if (event.shiftKey) {
-        console.log(Editor.rangeRef.current);
         setSelectedNodes(editor);
       } else {
         removeSelectedProperty(editor);
@@ -301,10 +300,11 @@ function UnitFlow() {
     //   focus: { path: [0, 1, 0, 0, 0], offset: 27 },
     // };
 
-    const range = Editor.range(editor, [0, 1, 0], [1]);
+    // const range = Editor.range(editor, [0, 1, 0], [1]);
 
-    Transforms.select(editor, range);
-    setSelectedNodes(editor);
+    // Transforms.select(editor, range);
+    // setSelectedNodes(editor);
+    console.log(editor.selection);
   };
 
   const show = () => {
