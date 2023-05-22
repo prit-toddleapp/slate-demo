@@ -122,6 +122,48 @@ export const initialValue = [
           },
           {
             id: makeNodeId(),
+            type: "aiBlock",
+            children: [
+              {
+                id: makeNodeId(),
+                type: "blockTitle",
+                children: [
+                  {
+                    text: "ASD This is the title paragraph",
+                    parentType: "blockTitle",
+                  },
+                ],
+              },
+              {
+                id: makeNodeId(),
+                type: "blockSubtext",
+                children: [{ text: "ASD subtext", parentType: "blockSubtext" }],
+              },
+            ],
+          },
+          {
+            id: makeNodeId(),
+            type: "aiBlock",
+            children: [
+              {
+                id: makeNodeId(),
+                type: "blockTitle",
+                children: [
+                  {
+                    text: "QWE This is the title paragraph",
+                    parentType: "blockTitle",
+                  },
+                ],
+              },
+              {
+                id: makeNodeId(),
+                type: "blockSubtext",
+                children: [{ text: "QWE subtext", parentType: "blockSubtext" }],
+              },
+            ],
+          },
+          {
+            id: makeNodeId(),
             type: "resourceBlock",
             iconUrl: "LE",
             children: [{ text: "Resource block", parentType: "resourceBlock" }],

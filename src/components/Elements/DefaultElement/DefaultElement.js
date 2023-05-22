@@ -31,7 +31,6 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
 
   const handleMenuClick = (e) => {
     const path = findElementPath(editor, element);
-    console.log(path, element);
     switch (e.target.textContent) {
       case "Ask Shifu":
         //Op1
