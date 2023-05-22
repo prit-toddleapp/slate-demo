@@ -155,7 +155,7 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
 };
 
 //following function will set selected in the nodes included in editor.selection
-export const getSelectedNodes = (editor) => {
+export const setSelectedNodes = (editor) => {
   Transforms.select(editor, fullySelectedRange(editor));
   const selectedNodes = Editor.nodes(editor, {});
 
