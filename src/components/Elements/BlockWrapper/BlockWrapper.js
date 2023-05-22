@@ -16,6 +16,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import { getMenuOptions } from "../../../Utils/DefaultBlocksUtil";
+import { makeNodeId } from "../../../Plugins/WithNodeId";
 
 const BlockWrapper = ({ editor, element, child, attributes }) => {
   const [visibility, setVisibility] = useState("hidden");
@@ -89,6 +90,7 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
     switch (e.target.textContent) {
       case "Ask Shifu":
         addNewBlock(editor, element, {
+          id: makeNodeId(),
           type: "regenerateSearchBox",
           children: [{ text: "" }],
         });
