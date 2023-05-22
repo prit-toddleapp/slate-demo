@@ -62,8 +62,32 @@ export const addNewBlock = (
     ],
   }
 ) => {
-  const path = findElementPath(editor, element);
-  Transforms.insertNodes(editor, block, { at: incrementPath(path) });
+  const path =
+    block?.type === "regenerateSearchBox"
+      ? getLastLeafPathOfCurrentSelection(editor)
+      : findElementPath(editor, element);
+
+  Transforms.insertNodes(editor, block, {
+    at: incrementPath(path),
+  });
+};
+
+export const getLastLeafPathOfCurrentSelection = (editor) => {
+  const { selection } = editor;
+  let [leaf, path] = Editor.last(editor, selection);
+
+  const path2 = [...path];
+  switch (leaf.parentType) {
+    case "blockTitle":
+    case "blockSubtext":
+      path2.splice(-2);
+      break;
+    default:
+      path2.pop();
+      break;
+  }
+
+  return path2;
 };
 
 export const addShifuSearchBox = (editor, element) => {
