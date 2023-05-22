@@ -83,7 +83,7 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
         Transforms.select(editor, path);
         break;
       default:
-        addNewBlock(editor, element);
+        addNewBlock(editor, [element]);
         break;
     }
     handleClose();
@@ -104,7 +104,11 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
   };
 
   return (
-    <div {...attributes} className={classes.defaultBlockContainer}>
+    <div
+      {...attributes}
+      className={classes.defaultBlockContainer}
+      contentEditable={false}
+    >
       <div>
         <IconButton
           aria-label="more"

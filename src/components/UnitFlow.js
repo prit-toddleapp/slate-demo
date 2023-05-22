@@ -23,6 +23,7 @@ import {
 } from "./Elements";
 import { JSONViewer } from "./../Utils/JsonViewer";
 import {
+  addNewBlock,
   atleastOneNodeSelected,
   deleteSelectedNodes,
   findElementPath,
@@ -392,9 +393,12 @@ function UnitFlow() {
               document.body
             )}
           </DndContext>
+          <div
+            className={classes.extraContainer}
+            onClick={() => addNewBlock(editor)}
+          ></div>
         </Slate>
       </div>
-      {JSONViewer(value)}
     </div>
   );
 }

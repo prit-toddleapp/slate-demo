@@ -62,32 +62,12 @@ export const addNewBlock = (
     ],
   }
 ) => {
-  const path =
-    block?.type === "regenerateSearchBox"
-      ? getLastLeafPathOfCurrentSelection(editor)
-      : findElementPath(editor, element);
-
+  const path = _.last(element)
+    ? findElementPath(editor, _.last(element))
+    : null;
   Transforms.insertNodes(editor, block, {
-    at: incrementPath(path),
+    at: path ? incrementPath(path) : [0],
   });
-};
-
-export const getLastLeafPathOfCurrentSelection = (editor) => {
-  const { selection } = editor;
-  let [leaf, path] = Editor.last(editor, selection);
-
-  const path2 = [...path];
-  switch (leaf.parentType) {
-    case "blockTitle":
-    case "blockSubtext":
-      path2.splice(-2);
-      break;
-    default:
-      path2.pop();
-      break;
-  }
-
-  return path2;
 };
 
 export const addShifuSearchBox = (editor, element) => {
@@ -173,7 +153,8 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
   switch (startingLeaf.parentType) {
     case "blockTitle":
     case "blockSubtext":
-      startingPath2.splice(-2);
+      startingPath2.pop();
+      startingPath2.pop();
       break;
     default:
       startingPath2.pop();
@@ -183,7 +164,8 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
   switch (endingLeaf.parentType) {
     case "blockTitle":
     case "blockSubtext":
-      endingPath2.splice(-2);
+      endingPath2.pop();
+      endingPath2.pop();
       break;
     default:
       endingPath2.pop();
@@ -195,11 +177,58 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
   return tmp;
 };
 
+<<<<<<< HEAD
 //following function will set selected in the nodes included in editor.selection
 export const setSelectedNodes = (editor) => {
   //previous editor.selection => Editor.rangeRef.current
   //When multiple shift+click events occur we need to know the previous editor selection
   //so that it can be combined with the new selection
+=======
+export const getSelectedNodeTypes = (editor) => {
+  const nodeTypes = [];
+
+  const getNodesWithProperty = (node) => {
+    if (node.selected) {
+      nodeTypes.push(node.type);
+    }
+
+    if (node.children) {
+      for (const childNode of node.children) {
+        getNodesWithProperty(childNode);
+      }
+    }
+  };
+
+  getNodesWithProperty(editor);
+
+  return nodeTypes;
+};
+
+export const getSelectedElements = (editor) => {
+  const elements = [];
+
+  const getNodesWithProperty = (node) => {
+    if (node.selected) {
+      elements.push(node);
+    }
+
+    if (node.children) {
+      for (const childNode of node.children) {
+        getNodesWithProperty(childNode);
+      }
+    }
+  };
+
+  getNodesWithProperty(editor);
+
+  return elements;
+};
+
+//following function will give me the nodes included in editor.selection
+export const getSelectedNodes = (editor) => {
+  Transforms.select(editor, fullySelectedRange(editor));
+  const selectedNodes = Editor.nodes(editor, {});
+>>>>>>> main
 
   let oldSelection = Editor.rangeRef.current;
   let fullEditorSelectionRange = fullySelectedRange(editor, editor.selection);

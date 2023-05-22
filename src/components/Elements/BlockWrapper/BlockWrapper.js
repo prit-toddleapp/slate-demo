@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import {
   addNewBlock,
   findElementPath,
+  getSelectedElements,
+  getSelectedNodeTypes,
+  getSelectedNodes,
   turnInElement,
   updateNodeChildren,
   removeSelectedProperty,
@@ -87,67 +90,81 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
   };
 
   const handleMenuClick = (e) => {
+    const selectedElements = getSelectedElements(editor);
+    if (_.isEmpty(selectedElements)) selectedElements.push(element);
+    console.log(selectedElements);
     switch (e.target.textContent) {
       case "Ask Shifu":
-        addNewBlock(editor, element, {
-          id: makeNodeId(),
+        addNewBlock(editor, selectedElements, {
           type: "regenerateSearchBox",
           children: [{ text: "" }],
         });
         break;
       case "Duplicate":
-        {
-          const path = findElementPath(editor, element);
+        _.forEach(selectedElements, (ele) => {
+          const path = findElementPath(editor, ele);
+          console.log(path, ele);
           path[path.length - 1] = path[path.length - 1] + 1;
-          Transforms.insertNodes(editor, _.cloneDeep(element), { at: path });
-        }
+          Transforms.insertNodes(editor, _.cloneDeep(ele), { at: path });
+        });
         break;
       case "Delete":
-        {
+        _.forEach(selectedElements, (element) => {
           const path = findElementPath(editor, element);
           Transforms.removeNodes(editor, { at: path });
-        }
+          if (editor.children.length == 0) {
+            addNewBlock(editor);
+          }
+        });
         break;
       case "Delete Only Section":
-        {
+        _.forEach(selectedElements, (element) => {
           const path = findElementPath(editor, element);
           handleUnwrapSectionBlocks(path);
-        }
+        });
         break;
       case "Turn In to LE":
-        turnInElement(editor, element, "LE");
+        _.forEach(selectedElements, (element) =>
+          turnInElement(editor, element, "LE")
+        );
         break;
       case "Turn In to FA":
-        turnInElement(editor, element, "FA");
+        _.forEach(selectedElements, (element) =>
+          turnInElement(editor, element, "FA")
+        );
         break;
       case "Turn In to SA":
-        turnInElement(editor, element, "SA");
+        _.forEach(selectedElements, (element) =>
+          turnInElement(editor, element, "SA")
+        );
         break;
       case "Turn In to Section":
-        const path = findElementPath(editor, element);
-        let children = [
-          {
-            type: "sectionHeader",
-            children: element.children,
-          },
-          {
-            type: "newBlock",
-            children: [
-              {
-                text: "",
-              },
-            ],
-          },
-        ];
-        updateNodeChildren(editor, path, children);
-        Transforms.setNodes(
-          editor,
-          {
-            type: "section",
-            isCollapsed: false,
-          },
-          { at: path }
-        );
+        _.forEach(selectedElements, (element) => {
+          const path = findElementPath(editor, element);
+          let children = [
+            {
+              type: "sectionHeader",
+              children: element.children,
+            },
+            {
+              type: "newBlock",
+              children: [
+                {
+                  text: "",
+                },
+              ],
+            },
+          ];
+          updateNodeChildren(editor, path, children);
+          Transforms.setNodes(
+            editor,
+            {
+              type: "section",
+              isCollapsed: false,
+            },
+            { at: path }
+          );
+        });
         break;
 
       default: {
@@ -164,7 +181,7 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
       onMouseOut={onMouseOut}
     >
       <div
-        onClick={() => addNewBlock(editor, element)}
+        onClick={() => addNewBlock(editor, [element])}
         className={classes.buttonContainer}
         style={{ visibility }}
       >
@@ -197,7 +214,7 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
             },
           }}
         >
-          {getMenuOptions(element.type).map((option) => (
+          {getMenuOptions(element.type, editor).map((option) => (
             <MenuItem
               key={option.key}
               selected={option === "Pyxis"}
