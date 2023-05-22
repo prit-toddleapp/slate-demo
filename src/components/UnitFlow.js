@@ -27,7 +27,7 @@ import {
   deleteSelectedNodes,
   findElementPath,
   fullySelectedRange,
-  getSelectedNodes,
+  setSelectedNodes,
   removeSelectedProperty,
 } from "../Plugins";
 import BlockWrapper from "./Elements/BlockWrapper/BlockWrapper";
@@ -221,7 +221,7 @@ function UnitFlow() {
     if (event.button === 0) {
       if (event.shiftKey) {
         console.log(Editor.rangeRef.current);
-        getSelectedNodes(editor);
+        setSelectedNodes(editor);
       } else {
         removeSelectedProperty(editor);
       }
@@ -258,7 +258,7 @@ function UnitFlow() {
           incrementPath(elementPath, newSection.length - 1)
         );
         Transforms.select(editor, range);
-        getSelectedNodes(editor);
+        setSelectedNodes(editor);
         Transforms.insertNodes(
           editor,
           { type: "regenerateSearchBox", children: [{ text: "" }] },
@@ -296,12 +296,15 @@ function UnitFlow() {
 
   const select = () => {
     //const range = Editor.range(editor, [0, 0, 0]);
-    const range = {
-      anchor: { path: [0, 1, 0, 0, 0], offset: 18 },
-      focus: { path: [0, 1, 0, 0, 0], offset: 27 },
-    };
+    // const range = {
+    //   anchor: { path: [0, 1, 0, 0, 0], offset: 18 },
+    //   focus: { path: [0, 1, 0, 0, 0], offset: 27 },
+    // };
+
+    const range = Editor.range(editor, [0, 1, 0], [1]);
 
     Transforms.select(editor, range);
+    setSelectedNodes(editor);
   };
 
   const show = () => {
