@@ -333,7 +333,6 @@ function UnitFlow() {
     //1. Blocks cannot be edited after one character
     //2. Search input box focus not working
   }, [value]);
-  console.log(value);
 
   const items = useMemo(
     () => editor.children.map((element) => element.id),
