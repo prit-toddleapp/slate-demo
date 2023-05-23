@@ -47,7 +47,7 @@ import {
 } from "@dnd-kit/sortable";
 import { withNodeId } from "../Plugins/WithNodeId";
 import { createPortal } from "react-dom";
-import _ from "lodash";
+import _, { isEmpty } from "lodash";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { makeNodeId } from "../Plugins/WithNodeId";
 
@@ -90,7 +90,7 @@ function UnitFlow() {
     const elementPath = findElementPath(editor, activeElement);
     const overElementPath = findElementPath(editor, overElement);
     console.log({ overElementPath, elementPath, overElement });
-    if (!_.isEqual(overElementPath, elementPath)) {
+    if (!_.isEqual(overElementPath, elementPath) && !isEmpty(overElementPath)) {
       Transforms.moveNodes(editor, {
         at: elementPath,
         to: overElementPath,
@@ -111,16 +111,7 @@ function UnitFlow() {
   };
 
   const renderElement = useCallback((props) => {
-    const isDraggableBlock = _.includes(
-      ["section", "resourceBlock", "paragraph", "newBlock", "aiBlock"],
-      props.element.type
-    );
-
-    return isDraggableBlock ? (
-      <SortableElement {...props} renderElement={renderElementContent} />
-    ) : (
-      renderElementContent(props)
-    );
+    return renderElementContent(props);
   }, []);
 
   const renderElementContent = useCallback((props) => {
@@ -132,6 +123,7 @@ function UnitFlow() {
               <Section {...props} collapsedIconClicked={collapsedIconClicked} />
             }
             editor={editor}
+            activeId={activeId}
             {...props}
           />
         );
@@ -144,6 +136,7 @@ function UnitFlow() {
           <BlockWrapper
             child={<AiBlock {...props} editor={editor} />}
             editor={editor}
+            activeId={activeId}
             {...props}
           />
         );
@@ -156,6 +149,7 @@ function UnitFlow() {
           <BlockWrapper
             child={<ResourceBlock {...props} />}
             editor={editor}
+            activeId={activeId}
             {...props}
           />
         );
@@ -184,6 +178,7 @@ function UnitFlow() {
           <BlockWrapper
             child={<Paragraph {...props} editor={editor} />}
             editor={editor}
+            activeId={activeId}
             {...props}
           />
         );
@@ -192,6 +187,7 @@ function UnitFlow() {
           <BlockWrapper
             child={<DefaultElement {...props} editor={editor} />}
             editor={editor}
+            activeId={activeId}
             {...props}
           />
         );
@@ -362,8 +358,8 @@ function UnitFlow() {
       <h1>Unit Flow</h1>
       <div className={classes.slateContainer}>
         <Slate editor={editor} value={value} onChange={(v) => setValue(v)}>
-          <button onClick={select}>select</button>
-          <button onClick={show}>give selection</button>
+          {/* <button onClick={select}>select</button>
+          <button onClick={show}>give selection</button> */}
           <DndContext
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
@@ -492,9 +488,6 @@ const DragOverlayContent = ({ element }) => {
   }, []);
   return (
     <div className={classes.container}>
-      <div className={classes.dragIcon}>
-        <DragIndicatorIcon fontSize="small" />
-      </div>
       <Slate editor={editor} value={value}>
         <Editable readOnly={true} renderElement={renderElement} />
       </Slate>
@@ -510,13 +503,6 @@ const SortableElement = (props) => {
     <div {...attributes}>
       <Sortable sortable={sortable}>
         <div className={classes.container}>
-          <div
-            contentEditable={false}
-            {...sortable.listeners}
-            className={classes.dragIcon}
-          >
-            <DragIndicatorIcon fontSize="small" />
-          </div>
           <div>{renderElement(props)}</div>
         </div>
       </Sortable>

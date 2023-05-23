@@ -20,8 +20,9 @@ import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import { getMenuOptions } from "../../../Utils/DefaultBlocksUtil";
 import { makeNodeId } from "../../../Plugins/WithNodeId";
+import { useSortable } from "@dnd-kit/sortable";
 
-const BlockWrapper = ({ editor, element, child, attributes }) => {
+const BlockWrapper = ({ editor, element, child, attributes, isDragged }) => {
   const [visibility, setVisibility] = useState("hidden");
   const [anchorEl, setAnchorEl] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -75,7 +76,6 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
   const handleClick = (event) => {
     event.stopPropagation();
     event.preventDefault();
-
     if (!isEntireNodeSelected(editor, element)) selectEntireNode();
 
     setAnchorEl(event.currentTarget);
@@ -173,6 +173,7 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
     handleClose();
   };
 
+  const sortable = useSortable({ id: element.id });
   return (
     <div
       className={classes.blockWrapperContainer}
@@ -180,55 +181,102 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
     >
-      <div
-        onClick={() => addNewBlock(editor, [element])}
-        className={classes.buttonContainer}
-        style={{ visibility }}
-      >
-        <AddIcon fontSize="small" />
-      </div>
-      <div className={classes.buttonContainer} style={{ visibility }}>
-        <IconButton
-          aria-label="more"
-          id="long-button"
-          aria-controls={isOpen ? "long-menu" : undefined}
-          aria-expanded={isOpen ? "true" : undefined}
-          aria-haspopup="true"
-          onClick={handleClick}
-        >
-          <DragIndicatorIcon fontSize="small" />
-        </IconButton>
-
-        <Menu
-          id="long-menu"
-          MenuListProps={{
-            "aria-labelledby": "long-button",
-          }}
-          anchorEl={anchorEl}
-          open={isOpen}
-          onClose={handleClose}
-          PaperProps={{
-            style: {
-              maxHeight: 48 * 4.5,
-              width: "20ch",
-            },
-          }}
-        >
-          {getMenuOptions(element.type, editor).map((option) => (
-            <MenuItem
-              key={option.key}
-              selected={option === "Pyxis"}
-              onClick={handleMenuClick}
+      <Sortable sortable={sortable}>
+        <div className={classes.blockWrapperContainer}>
+          <div
+            onClick={() => addNewBlock(editor, [element])}
+            className={classes.buttonContainer}
+            style={{ visibility }}
+          >
+            <AddIcon fontSize="small" />
+          </div>
+          <div className={classes.buttonContainer} style={{ visibility }}>
+            <IconButton
+              aria-label="more"
+              id="long-button"
+              aria-controls={isOpen ? "long-menu" : undefined}
+              aria-expanded={isOpen ? "true" : undefined}
+              aria-haspopup="true"
+              onMouseDown={handleClick}
+              {...sortable.listeners}
             >
-              {option.label}
-            </MenuItem>
-          ))}
-        </Menu>
-      </div>
+              <DragIndicatorIcon fontSize="small" />
+            </IconButton>
 
-      <div>{child}</div>
+            <Menu
+              id="long-menu"
+              MenuListProps={{
+                "aria-labelledby": "long-button",
+              }}
+              anchorEl={anchorEl}
+              open={isOpen && !sortable.isDragging}
+              onClose={handleClose}
+              PaperProps={{
+                style: {
+                  maxHeight: 48 * 4.5,
+                  width: "20ch",
+                },
+              }}
+            >
+              {getMenuOptions(element.type, editor).map((option) => (
+                <MenuItem
+                  key={option.key}
+                  selected={option === "Pyxis"}
+                  onClick={handleMenuClick}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Menu>
+          </div>
+
+          <div>{child}</div>
+        </div>
+      </Sortable>
     </div>
   );
 };
 
 export default BlockWrapper;
+
+const SortableElement = (props) => {
+  const { attributes, element, children, renderElement } = props;
+  const sortable = useSortable({ id: element.id });
+
+  return (
+    <div {...attributes}>
+      <Sortable sortable={sortable}>
+        <div className={classes.container}>
+          <div
+            contentEditable={false}
+            {...sortable.listeners}
+            className={classes.dragIcon}
+          >
+            <DragIndicatorIcon fontSize="small" />
+          </div>
+          <div>{renderElement(props)}</div>
+        </div>
+      </Sortable>
+    </div>
+  );
+};
+
+const Sortable = ({ sortable, children }) => {
+  return (
+    <div
+      className="sortable"
+      {...sortable.attributes}
+      ref={sortable.setNodeRef}
+      style={{
+        transition: sortable.transition,
+        "--translate-y": toPx(sortable.transform?.y),
+        pointerEvents: sortable.isSorting ? "none" : undefined,
+        opacity: sortable.isDragging ? 0 : 1,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const toPx = (value) => (value ? `${Math.round(value)}px` : undefined);
