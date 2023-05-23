@@ -226,7 +226,7 @@ const BlockWrapper = ({ editor, element, child, attributes }) => {
         </Menu>
       </div>
 
-      <div>{child}</div>
+      <div style={{ flex: "1" }}>{child}</div>
     </div>
   );
 };

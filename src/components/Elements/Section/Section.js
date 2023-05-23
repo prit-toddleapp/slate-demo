@@ -38,7 +38,7 @@ const Section = (props) => {
           />
         )}
       </div>
-      <div>{isCollapsed ? [children[0]] : children}</div>
+      <div style={{ flex: "1" }}>{isCollapsed ? [children[0]] : children}</div>
     </div>
   );
 };
