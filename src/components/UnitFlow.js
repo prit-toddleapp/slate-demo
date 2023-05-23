@@ -403,7 +403,7 @@ function UnitFlow() {
           ></div>
         </Slate>
       </div>
-      {/* <div>{JSONViewer(value)}</div> */}
+      <div>{JSONViewer(value)}</div>
     </div>
   );
 }

@@ -8,7 +8,7 @@ const SectionHeader = (props) => {
         fontWeight: "500",
         fontSize: "18px",
         lineHeight: "24px",
-        padding: "4px 2px",
+        padding: "2px",
         marginBottom: "12px",
         background: props.element.selected
           ? "rgba(35, 131, 226, 0.14)"
