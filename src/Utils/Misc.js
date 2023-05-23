@@ -137,6 +137,7 @@ const singleSectionBlock = [
         children: [
           {
             text: "New section title",
+            parentType: "sectionHeader",
           },
         ],
       },

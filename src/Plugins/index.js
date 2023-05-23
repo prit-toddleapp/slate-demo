@@ -153,6 +153,7 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
   switch (startingLeaf.parentType) {
     case "blockTitle":
     case "blockSubtext":
+    case "sectionHeader":
       startingPath2.pop();
       startingPath2.pop();
       break;
@@ -164,6 +165,7 @@ export const fullySelectedRange = (editor, range = editor.selection) => {
   switch (endingLeaf.parentType) {
     case "blockTitle":
     case "blockSubtext":
+    case "sectionHeader":
       endingPath2.pop();
       endingPath2.pop();
       break;
@@ -222,7 +224,6 @@ export const getSelectedElements = (editor) => {
 export const setSelectedNodes = (editor) => {
   //previous editor.selection => Editor.rangeRef.current
   //When multiple shift+click events occur we need to know the previous editor selection
-  Transforms.select(editor, fullySelectedRange(editor));
 
   let oldSelection = Editor.rangeRef.current;
   let fullEditorSelectionRange = fullySelectedRange(editor, editor.selection);

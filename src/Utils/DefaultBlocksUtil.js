@@ -13,6 +13,7 @@ export const DefaultBlock = {
         children: [
           {
             text: "",
+            parentType: "sectionHeader",
           },
         ],
       },
@@ -24,6 +25,7 @@ export const DefaultBlock = {
     children: [
       {
         text: "",
+        parentType: "sectionHeader",
       },
     ],
   },
@@ -90,6 +92,7 @@ export const initialValue = [
         children: [
           {
             text: "This is the header",
+            parentType: "sectionHeader",
           },
         ],
       },
@@ -184,6 +187,7 @@ export const initialValue = [
         children: [
           {
             text: "This is the header",
+            parentType: "sectionHeader",
           },
         ],
       },
@@ -242,7 +246,12 @@ export const menuOptions = {
     { key: "DELETE", label: "Delete", id: "DELETE" },
     { key: "DELETE_SECTION", label: "Delete Only Section", id: "DELETE" },
   ],
-  sectionHeader: [{ key: "SHIFU", label: "Ask Shifu", id: "SHIFU" }],
+  sectionHeader: [
+    { key: "SHIFU", label: "Ask Shifu", id: "SHIFU" },
+    { key: "DUPLICATE", label: "Duplicate", id: "DUPLICATE" },
+    { key: "DELETE", label: "Delete", id: "DELETE" },
+    { key: "DELETE_SECTION", label: "Delete Only Section", id: "DELETE" },
+  ],
   aiBlock: [
     { key: "SHIFU", label: "Ask Shifu", id: "SHIFU" },
     { key: "DUPLICATE", label: "Duplicate", id: "DUPLICATE" },

@@ -56,6 +56,7 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
               children: [
                 {
                   text: "",
+                  parentType: "sectionHeader",
                 },
               ],
             },

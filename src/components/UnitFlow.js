@@ -222,6 +222,8 @@ function UnitFlow() {
   const clickOps = (event) => {
     if (event.button === 0) {
       if (event.shiftKey) {
+        event.preventDefault();
+        event.stopPropagation();
         setSelectedNodes(editor);
       } else {
         removeSelectedProperty(editor);
@@ -362,8 +364,8 @@ function UnitFlow() {
       <h1>Unit Flow</h1>
       <div className={classes.slateContainer}>
         <Slate editor={editor} value={value} onChange={(v) => setValue(v)}>
-          <button onClick={select}>select</button>
-          <button onClick={show}>give selection</button>
+          {/* <button onClick={select}>select</button>
+          <button onClick={show}>give selection</button> */}
           <DndContext
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
@@ -399,6 +401,7 @@ function UnitFlow() {
           ></div>
         </Slate>
       </div>
+      {/* <div>{JSONViewer(value)}</div> */}
     </div>
   );
 }
