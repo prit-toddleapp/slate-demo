@@ -6,6 +6,8 @@ const SectionHeader = (props) => {
       {...props.attributes}
       style={{
         fontWeight: "500",
+        fontSize: "18px",
+        lineHeight: "24px",
         marginBottom: "12px",
         background: props.element.selected
           ? "rgba(35, 131, 226, 0.14)"

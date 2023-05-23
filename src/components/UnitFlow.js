@@ -111,10 +111,12 @@ function UnitFlow() {
   };
 
   const renderElement = useCallback((props) => {
-    const isDraggableBlock = _.includes(
-      ["section", "resourceBlock", "paragraph", "newBlock", "aiBlock"],
-      props.element.type
-    );
+    const isDraggableBlock =
+      false &&
+      _.includes(
+        ["section", "resourceBlock", "paragraph", "newBlock", "aiBlock"],
+        props.element.type
+      );
 
     return isDraggableBlock ? (
       <SortableElement {...props} renderElement={renderElementContent} />

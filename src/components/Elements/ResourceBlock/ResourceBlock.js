@@ -6,9 +6,11 @@ const ResourceBlock = (props) => {
   return (
     <div
       {...props.attributes}
-      contentEditable={false}
+      //contentEditable={false}
       style={{
         background: element.selected ? "rgba(35, 131, 226, 0.14)" : "white",
+        padding: "4px 50px 4px 0px",
+        marginBottom: "12px",
       }}
       className={classes.ResourceBlockContainer}
     >
