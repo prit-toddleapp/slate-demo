@@ -76,6 +76,7 @@ const BlockWrapper = ({ editor, element, child, attributes, isDragged }) => {
   const handleClick = (event) => {
     event.stopPropagation();
     event.preventDefault();
+    console.log(isEntireNodeSelected(editor, element));
     if (!isEntireNodeSelected(editor, element)) selectEntireNode();
 
     setAnchorEl(event.currentTarget);
@@ -143,14 +144,19 @@ const BlockWrapper = ({ editor, element, child, attributes, isDragged }) => {
           const path = findElementPath(editor, element);
           let children = [
             {
+              id: makeNodeId(),
               type: "sectionHeader",
               children: element.children,
             },
             {
-              type: "newBlock",
+              id: makeNodeId(),
+              type: "sectionBody",
+              //isCollapsed: false, is this appraoch better?
               children: [
                 {
-                  text: "",
+                  id: makeNodeId(),
+                  type: "newBlock",
+                  children: [{ text: "" }],
                 },
               ],
             },
@@ -161,6 +167,7 @@ const BlockWrapper = ({ editor, element, child, attributes, isDragged }) => {
             {
               type: "section",
               isCollapsed: false,
+              selected: false,
             },
             { at: path }
           );
@@ -272,6 +279,7 @@ const Sortable = ({ sortable, children }) => {
         "--translate-y": toPx(sortable.transform?.y),
         pointerEvents: sortable.isSorting ? "none" : undefined,
         opacity: sortable.isDragging ? 0 : 1,
+        flex: 1,
       }}
     >
       {children}

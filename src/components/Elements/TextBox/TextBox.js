@@ -31,7 +31,7 @@ const TextBox = (props) => {
     >
       <input
         type="text"
-        placeholder="Enter text here"
+        placeholder="Ask Shifu to..."
         value={inputValue}
         style={{ outline: "none", border: "0px", width: "80%" }}
         onChange={(e) => {

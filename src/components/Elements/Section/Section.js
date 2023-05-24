@@ -5,7 +5,6 @@ const iconStyle = {
   border: "1px solid #EBEBEB",
   borderRadius: "36px",
   height: "24px",
-  marginTop: "4px",
 };
 
 const Section = (props) => {

@@ -1,11 +1,22 @@
-.defaultBlockContainer{
-    display: flex;
-    align-items: center;
+.defaultBlockContainer {
+  display: flex;
+  column-gap: 10px;
+  margin-bottom: 20px;
+  margin-left: 55px;
 }
 
-.placeholder{
-    font-size: 16px;
-    line-height: 24px;
-    color: #717171;
-    cursor: auto;
+.placeholder {
+  font-size: 16px;
+  color: #717171;
+  cursor: auto;
+}
+
+.buttonContainer {
+  height: 20px;
+  width: 15px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  cursor: pointer;
+  color: #cdcdcd;
 }

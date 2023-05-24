@@ -12,6 +12,7 @@ import {
   updateNodeChildren,
 } from "../../../Plugins";
 import { Transforms } from "slate";
+import { makeNodeId } from "../../../Plugins/WithNodeId";
 
 const DefaultElement = ({ editor, element, attributes, children }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -52,6 +53,7 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
           path,
           [
             {
+              id: makeNodeId(),
               type: "sectionHeader",
               children: [
                 {
@@ -61,10 +63,14 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
               ],
             },
             {
-              type: "newBlock",
+              id: makeNodeId(),
+              type: "sectionBody",
+              //isCollapsed: false, is this appraoch better?
               children: [
                 {
-                  text: "",
+                  id: makeNodeId(),
+                  type: "newBlock",
+                  children: [{ text: "" }],
                 },
               ],
             },
@@ -81,7 +87,7 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
         );
 
         console.log("path", path);
-        Transforms.select(editor, path);
+        //Transforms.select(editor, [...path, 0]);
         break;
       default:
         addNewBlock(editor, [element]);
@@ -90,9 +96,12 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
     handleClose();
   };
 
-  const updateBlock = () => {
+  const updateBlock = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     const path = findElementPath(editor, element);
 
+    console.log("fgfghs", path);
     Transforms.setNodes(
       editor,
       {
@@ -101,7 +110,7 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
       { at: path }
     );
 
-    Transforms.select(editor, path);
+    //Transforms.select(editor, path);
   };
 
   return (
@@ -110,7 +119,7 @@ const DefaultElement = ({ editor, element, attributes, children }) => {
       className={classes.defaultBlockContainer}
       contentEditable={false}
     >
-      <div>
+      <div className={classes.buttonContainer}>
         <IconButton
           aria-label="more"
           id="long-button"

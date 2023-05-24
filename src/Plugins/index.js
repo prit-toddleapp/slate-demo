@@ -89,6 +89,7 @@ export const addShifuSearchBox = (editor, element) => {
 //check if the element's range in entirely included in the selection
 export const isEntireNodeSelected = (editor, element) => {
   const { selection } = editor;
+  console.log(selection);
   if (!selection) {
     return false;
   }
@@ -282,6 +283,7 @@ export const atleastOneNodeSelected = (editor) => {
     match: (n) => n.selected,
   });
 
+  console.log(selectedNodes);
   for (const selectedNode of selectedNodes) {
     return true;
   }

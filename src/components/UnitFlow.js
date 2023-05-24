@@ -80,7 +80,6 @@ function UnitFlow() {
       clearSelection();
       setActiveId(event.active.id);
     }
-    //console.log({ event });
   };
 
   const handleDragEnd = (event) => {
@@ -184,12 +183,13 @@ function UnitFlow() {
         );
       default:
         return (
-          <BlockWrapper
-            child={<DefaultElement {...props} editor={editor} />}
-            editor={editor}
-            activeId={activeId}
-            {...props}
-          />
+          // <BlockWrapper
+          //   child={<DefaultElement {...props} editor={editor} />}
+          //   editor={editor}
+          //   activeId={activeId}
+          //   {...props}
+          // />
+          <DefaultElement {...props} editor={editor} />
         );
     }
   }, []);
@@ -331,8 +331,8 @@ function UnitFlow() {
   };
 
   useEffect(() => {
+    console.log(editor.selection);
     //remove selection on UI
-
     if (atleastOneNodeSelected(editor)) {
       if (window.getSelection) {
         if (window.getSelection().removeAllRanges) {
@@ -344,7 +344,6 @@ function UnitFlow() {
         document.selection.empty();
       }
     }
-
     /*** atleastOneNodeSelected used to solve these ISSUES: ***/
     //1. Blocks cannot be edited after one character
     //2. Search input box focus not working
@@ -397,7 +396,7 @@ function UnitFlow() {
           ></div>
         </Slate>
       </div>
-      <div>{JSONViewer(value)}</div>
+      {/* <div>{JSONViewer(value)}</div> */}
     </div>
   );
 }

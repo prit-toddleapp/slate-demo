@@ -4,7 +4,7 @@ const SectionBody = (props) => {
   if (props.element.isCollapsed) return null;
 
   return (
-    <div {...props.attributes}>
+    <div {...props.attributes} style={{ marginLeft: "-50px" }}>
       <div>{props.children}</div>
     </div>
   );
